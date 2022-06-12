@@ -4,14 +4,15 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     //Inspector fields
-    [SerializeField] private float speed;
+    [SerializeField] private float _speed;
+    [SerializeField] private float _gravityMultiplier;
 
     //private fields
     private Vector3 _inputVector;
     private Vector3 _movementVector;
-    private bool airborneLastFrame;
-    private Vector3 playerForward;
-    private Vector3 playerRight;
+    private bool _airborneLastFrame;
+    private Vector3 _playerForward;
+    private Vector3 _playerRight;
 
     //Components and References
     private Rigidbody _rb;
@@ -44,27 +45,27 @@ public class Movement : MonoBehaviour
         {
             if (_groundChecker.IsGrounded() == false)
             {
-                airborneLastFrame = true;
-                _movementVector.y += Physics.gravity.y * Time.fixedDeltaTime;
+                _airborneLastFrame = true;
+                _movementVector.y += Physics.gravity.y * _gravityMultiplier * Time.fixedDeltaTime;
             }
             else
             {
-                if (airborneLastFrame)
+                if (_airborneLastFrame)
                 {
                     _movementVector.y = 0;
-                    airborneLastFrame = false;
+                    _airborneLastFrame = false;
                 }
             }
         }
 
         void CalculateRelativeMovement()
         {
-            playerForward = transform.forward;
-            playerRight = transform.right;
-            playerForward = playerForward.normalized;
-            playerRight = playerRight.normalized;
+            _playerForward = transform.forward;
+            _playerRight = transform.right;
+            _playerForward = _playerForward.normalized;
+            _playerRight = _playerRight.normalized;
             var tempYValue = _movementVector.y;
-            _movementVector = (playerForward * _inputVector.y + playerRight * _inputVector.x + Vector3.up * _movementVector.y) * speed;
+            _movementVector = (_playerForward * _inputVector.y + _playerRight * _inputVector.x + Vector3.up * _movementVector.y) * _speed;
             _movementVector.y = tempYValue;
         }
     }

@@ -623,8 +623,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerBody: {fileID: 1258401111}
-  _horizontalSensitivity: 50
-  _verticalSensitivity: 50
+  _horizontalSensitivity: 75
+  _verticalSensitivity: 75
 --- !u!1 &1258401106
 GameObject:
   m_ObjectHideFlags: 0
