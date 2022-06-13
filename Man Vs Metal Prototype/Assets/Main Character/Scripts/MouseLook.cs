@@ -35,7 +35,6 @@ public class MouseLook : MonoBehaviour
     void Update()
     {
         _yInput = _aimRef.ReadValue<Vector2>().y;
-        _xInput = _aimRef.ReadValue<Vector2>().x;
 
         if (_inputInitialized)
             RotateCameraAroundXAxis();
@@ -56,6 +55,7 @@ public class MouseLook : MonoBehaviour
     }
     private void RotateRigidbodyAroundYAxis()
     {
+        _xInput = _aimRef.ReadValue<Vector2>().x;
         _rbRotationChange.y = _xInput * _horizontalSensitivity * Time.fixedDeltaTime;
         _rb.MoveRotation(_rb.rotation * Quaternion.Euler(_rbRotationChange));
     }
