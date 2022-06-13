@@ -9,8 +9,7 @@ public class MouseLook : MonoBehaviour
     [SerializeField] private float _verticalSensitivity;
 
     //Private Fields
-    private float _xInput;
-    private float _yInput;
+    private Vector2 _inputVector;
     private bool _inputInitialized;
     private float _xAxisRotation;
     private Vector3 _rbRotationChange;
@@ -34,12 +33,13 @@ public class MouseLook : MonoBehaviour
     }
     void Update()
     {
-        _yInput = _aimRef.ReadValue<Vector2>().y;
+        _inputVector = _aimRef.ReadValue<Vector2>();
+        Debug.Log("update value read. Y input is currently " + _inputVector.y + " at frame " + Time.frameCount);
 
         if (_inputInitialized)
             RotateCameraAroundXAxis();
 
-        if (_yInput != 0)
+        if (_inputVector.y != 0)
             _inputInitialized = true;
     }
 
@@ -49,14 +49,14 @@ public class MouseLook : MonoBehaviour
     }
     private void RotateCameraAroundXAxis()
     {
-        _xAxisRotation -= _yInput * _verticalSensitivity * Time.deltaTime;
+        _xAxisRotation -= _inputVector.y * _verticalSensitivity * Time.deltaTime;
         _xAxisRotation = Mathf.Clamp(_xAxisRotation, -90, 90);
         transform.localRotation = Quaternion.Euler(_xAxisRotation, 0f, 0f);
     }
     private void RotateRigidbodyAroundYAxis()
     {
-        _xInput = _aimRef.ReadValue<Vector2>().x;
-        _rbRotationChange.y = _xInput * _horizontalSensitivity * Time.fixedDeltaTime;
+        Debug.Log("fixedUpdate value read. x input is currently " + _inputVector.x + " at frame " + Time.frameCount);
+        _rbRotationChange.y = _inputVector.x * _horizontalSensitivity * Time.fixedDeltaTime;
         _rb.MoveRotation(_rb.rotation * Quaternion.Euler(_rbRotationChange));
     }
 }
