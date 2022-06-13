@@ -14,7 +14,6 @@ public class MouseLook : MonoBehaviour
     private bool _inputInitialized;
     private float _xAxisRotation;
     private Vector3 _rbRotationChange;
-    private Mouse _mouseRef;
     private InputAction _aimRef;
 
     //Components/References
@@ -31,12 +30,12 @@ public class MouseLook : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-        _mouseRef = Mouse.current;
         _aimRef = _playerInputReader.PlayerInputActions.Player.Aim;
     }
     void Update()
     {
-        ReadXAndYInputs();
+        _yInput = _aimRef.ReadValue<Vector2>().y;
+        _xInput = _aimRef.ReadValue<Vector2>().x;
 
         if (_inputInitialized)
             RotateCameraAroundXAxis();
@@ -49,28 +48,15 @@ public class MouseLook : MonoBehaviour
     {
         RotateRigidbodyAroundYAxis();
     }
-    private void ReadXAndYInputs()
-    {
-        if (_aimRef.phase == InputActionPhase.Started || _aimRef.phase == InputActionPhase.Performed) //Controller Input
-        {
-            _xInput = _aimRef.ReadValue<Vector2>().x * _horizontalSensitivity * 35 * Time.deltaTime;
-            _yInput = _aimRef.ReadValue<Vector2>().y * _verticalSensitivity * 3 * Time.deltaTime;
-        }
-        else //Mouse Input
-        {
-            _xInput = _mouseRef.delta.x.ReadValue() * _horizontalSensitivity * 3 * Time.deltaTime;
-            _yInput = _mouseRef.delta.y.ReadValue() * _verticalSensitivity * 0.7f * Time.deltaTime;
-        }
-    }
     private void RotateCameraAroundXAxis()
     {
-        _xAxisRotation -= _yInput;
+        _xAxisRotation -= _yInput * _verticalSensitivity * Time.deltaTime;
         _xAxisRotation = Mathf.Clamp(_xAxisRotation, -90, 90);
         transform.localRotation = Quaternion.Euler(_xAxisRotation, 0f, 0f);
     }
     private void RotateRigidbodyAroundYAxis()
     {
-        _rbRotationChange.y = _xInput;
+        _rbRotationChange.y = _xInput * _horizontalSensitivity * Time.fixedDeltaTime;
         _rb.MoveRotation(_rb.rotation * Quaternion.Euler(_rbRotationChange));
     }
 }
