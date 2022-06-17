@@ -69,9 +69,31 @@ public class Movement : MonoBehaviour
             _movementVector.y = tempYValue;
         }
     }
-
     public void AddToMovementVector(Vector3 addedVector)
     {
         _movementVector += addedVector;
     }
+
+    //void OnCollisionEnter(Collision collision)
+    //{
+    //    rigidbody.velocity = Vector3.Reflect(rigidbody.velocity, collision.contacts[0].normal);
+    //}
+
+    //public float maxAngle = 95;
+    //void OnCollisionEnter(Collision collision)
+    //{
+    //    Vector3 normal = collision.contacts[0].normal;
+    //    Vector3 vel = rigidbody.velocity;
+    //    // measure angle
+    //    if (Vector3.Angle(vel, -normal) > maxAngle)
+    //    {
+    //        // bullet bounces off the surface
+    //        rigidbody.velocity = Vector3.Reflect(vel, normal);
+    //    }
+    //    else
+    //    {
+    //        // bullet penetrates the target - apply damage...
+    //        Destroy(gameObject); // and destroy the bullet
+    //    }
+    //}
 }
