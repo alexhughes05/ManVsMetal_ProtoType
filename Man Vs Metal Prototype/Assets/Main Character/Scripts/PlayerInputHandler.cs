@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerInputReader))]
@@ -12,20 +13,23 @@ public class PlayerInputHandler : MonoBehaviour
     private float _jumpTimer;
 
     //Components and References
-    private Movement _movement;
     private PlayerInputReader _playerInputReader;
+    private Movement _movement;
     private GroundChecker _groundChecker;
+    private Shooter _shooter;
 
     private void Awake()
     {
-        _groundChecker = GetComponent<GroundChecker>();
         _playerInputReader = GetComponent<PlayerInputReader>();
         _movement = GetComponent<Movement>();
+        _groundChecker = GetComponent<GroundChecker>();
+        _shooter = FindObjectOfType<Shooter>();
     }
     private void Start()
     {
         _jumpTimer = -1;
         _playerInputReader.JumpInput += JumpInputHandler;
+        _playerInputReader.ShootInput += _shooter.Shoot;
     }
 
     private void Update()
