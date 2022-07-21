@@ -1,0 +1,29 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Damageable : MonoBehaviour
+{
+    [SerializeField] private int startingHealth;
+
+    private int health;
+
+    private void Start()
+    {
+        health = startingHealth;
+    }
+
+    public void TakeDamage(int damageAmount)
+    {
+        health -= damageAmount;
+        Debug.Log(gameObject.name + " has been damaged. Health is now " + health);
+        if (health <= 0)
+            Die();
+    }
+
+    private void Die()
+    {
+        Destroy(gameObject);
+    }
+}

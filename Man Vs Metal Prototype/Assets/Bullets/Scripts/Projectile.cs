@@ -6,10 +6,9 @@ using System;
 public class Projectile : MonoBehaviour
 {
     //Inspector fields
-    [SerializeField] private float impactForce;
+    [SerializeField] private float _impactForce;
     [SerializeField] private TrailRenderer _bulletTrail;
-    [NonReorderable] public List<BulletImpact> impactEffects;
-    public Dictionary<Material, ParticleSystem> _bulletImpactDictionary = new Dictionary<Material, ParticleSystem>();
+    [SerializeField] private ParticleSystem _defaultImpactEffect;
 
     //Components/References
     private Rigidbody _rb;
@@ -26,11 +25,6 @@ public class Projectile : MonoBehaviour
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
-
-        foreach(BulletImpact impact in impactEffects)
-        {
-            _bulletImpactDictionary.Add(impact.Material, impact.impactEffect);
-        }
     }
 
     private void Start()
@@ -55,27 +49,31 @@ public class Projectile : MonoBehaviour
 
         if (Physics.Linecast(startPoint, endPoint, out RaycastHit hit))
         {
+            ApplyDamage(hit);
             TrailRenderer trail = Instantiate(_bulletTrail, BulletTrailStartPos, Quaternion.identity);
             StartCoroutine(SpawnTrail(trail, hit));
 
-            if (_bulletImpactDictionary.Count > 0 && hit.transform.gameObject.layer != LayerMask.NameToLayer("Hidden"))
-            {
-                if (hit.collider.gameObject.TryGetComponent(out Renderer renderer))
-                    CreateImpactEffect(renderer.sharedMaterial, hit);
-                else
-                    CreateImpactEffect(null, hit);
-            }
+            CreateImpactEffect(hit);
 
             var hitRb = hit.rigidbody;
 
             if (hitRb != null)
-                hitRb.AddForce((endPoint - startPoint).normalized * impactForce / hitRb.mass, ForceMode.Impulse);
+                hitRb.AddForce((endPoint - startPoint).normalized * _impactForce / hitRb.mass, ForceMode.Impulse);
 
             detectedHit = true;
         }
         StartCoroutine(DestroyProjectileAfterDelay(gameObject, 2f));
 
         return detectedHit;
+    }
+
+    private static void ApplyDamage(RaycastHit hit)
+    {
+        Damageable damageable = hit.collider.transform.root.gameObject.GetComponent<Damageable>();
+        if (damageable)
+        {
+            damageable.TakeDamage(1);
+        }
     }
 
     public void ApplyForceOnProjectile(Vector3 forceVector, ForceMode forceMode)
@@ -106,14 +104,18 @@ public class Projectile : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void CreateImpactEffect(Material colliderMat, RaycastHit hit)
+    private void CreateImpactEffect(RaycastHit hit)
     {
         ParticleSystem impactPs;
 
-        if (colliderMat == null || !_bulletImpactDictionary.ContainsKey(colliderMat))
-           impactPs = Instantiate(_bulletImpactDictionary[impactEffects[0].Material], hit.point, hit.transform.rotation);
+        var impactSpawner = hit.collider.gameObject.GetComponent<ImpactSpawner>();
+        if (impactSpawner == null)
+            impactSpawner = hit.collider.transform.root.gameObject.GetComponent<ImpactSpawner>();
+
+        if (impactSpawner)
+            impactPs = impactSpawner.SpawnImpactEffect(hit.point, hit.transform.rotation);
         else
-            impactPs = Instantiate(_bulletImpactDictionary[colliderMat], hit.point, hit.transform.rotation);
+            impactPs = Instantiate(_defaultImpactEffect, hit.point, hit.transform.rotation);
 
         impactPs.transform.forward = hit.normal;
         impactPs.Play();

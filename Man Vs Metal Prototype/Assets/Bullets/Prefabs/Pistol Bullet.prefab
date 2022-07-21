@@ -113,14 +113,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af06bff49588648409ada9003ff401be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  impactForce: 5
+  _impactForce: 5
   _bulletTrail: {fileID: 328621789431213768, guid: 43559d27d223bf340b413fde1315c256, type: 3}
-  impactEffects:
-  - Material: {fileID: 2100000, guid: 26bc8648a85c6b041a5d5b00ca61062b, type: 2}
-    impactEffect: {fileID: 3466726706656736195, guid: edbda0252689cd04797dac5fee8dc9c8, type: 3}
-  - Material: {fileID: 2100000, guid: 4f477167fc0be5e4dab9a125b37c42ad, type: 2}
-    impactEffect: {fileID: 2411320164622168018, guid: eee7db43975e04342a5b499299dddb9a, type: 3}
-  - Material: {fileID: 2100000, guid: ce4b77858ec6c0f469b07b034c21a85f, type: 2}
-    impactEffect: {fileID: 7337522186007033064, guid: 642f57da7fe671d4986c6cc05bf6c51e, type: 3}
-  - Material: {fileID: 2100000, guid: 3eb079016c4106b41bc3f19de570f770, type: 2}
-    impactEffect: {fileID: 586475268217499174, guid: 8dfcc8269cfff3541a68c05ea38e0bc1, type: 3}
+  _defaultImpactEffect: {fileID: 3466726706656736195, guid: edbda0252689cd04797dac5fee8dc9c8, type: 3}
