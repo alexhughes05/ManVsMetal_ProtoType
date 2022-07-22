@@ -17,8 +17,12 @@ public class Damageable : MonoBehaviour
     public void TakeDamage(int damageAmount)
     {
         health -= damageAmount;
+        if (health < 0)
+            health = 0;
+
         Debug.Log(gameObject.name + " has been damaged. Health is now " + health);
-        if (health <= 0)
+
+        if (health == 0)
             Die();
     }
 

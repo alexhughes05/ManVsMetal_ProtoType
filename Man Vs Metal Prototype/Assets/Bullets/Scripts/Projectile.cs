@@ -20,7 +20,7 @@ public class Projectile : MonoBehaviour
 
     //Properties
     public Vector3 BulletTrailStartPos { get; set; }
-
+    public int Damage { get; set; }
 
     private void Awake()
     {
@@ -67,12 +67,14 @@ public class Projectile : MonoBehaviour
         return detectedHit;
     }
 
-    private static void ApplyDamage(RaycastHit hit)
+    private void ApplyDamage(RaycastHit hit)
     {
         Damageable damageable = hit.collider.transform.root.gameObject.GetComponent<Damageable>();
         if (damageable)
         {
-            damageable.TakeDamage(1);
+            var damageEffectiveZone = hit.collider.gameObject.GetComponent<DamageEffectivenessZone>();
+            var damageMultiplier = damageEffectiveZone ? damageEffectiveZone.DamageMultiplier : 1;
+            damageable.TakeDamage(Damage * damageMultiplier);
         }
     }
 

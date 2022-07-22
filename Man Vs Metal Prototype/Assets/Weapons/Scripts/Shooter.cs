@@ -5,6 +5,7 @@ public class Shooter : MonoBehaviour
 {
     //Inspector
     [Header("Projectile")]
+    [SerializeField] private int _damage;
     [SerializeField] private Transform _endOfWeaponBarrelPos;
     [SerializeField] private GameObject _projectile;
     [Header("Visual Effects")]
@@ -60,6 +61,7 @@ public class Shooter : MonoBehaviour
             var bullet = SpawnBullet();
 
             _projectileScript = bullet.GetComponent<Projectile>();
+            _projectileScript.Damage = _damage;
             _projectileScript.ApplyForceOnProjectile(bullet.transform.up.normalized * _muzzleVelocity, ForceMode.Impulse);
             _projectileScript.BulletTrailStartPos = _endOfWeaponBarrelPos.position;
 
