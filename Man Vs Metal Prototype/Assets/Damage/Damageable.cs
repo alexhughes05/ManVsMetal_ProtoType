@@ -7,14 +7,14 @@ public class Damageable : MonoBehaviour
 {
     [SerializeField] private int startingHealth;
 
-    private int health;
+    private float health;
 
     private void Start()
     {
         health = startingHealth;
     }
 
-    public void TakeDamage(int damageAmount)
+    public void TakeDamage(float damageAmount)
     {
         health -= damageAmount;
         if (health < 0)

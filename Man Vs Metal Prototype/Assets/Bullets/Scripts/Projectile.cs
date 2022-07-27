@@ -20,7 +20,7 @@ public class Projectile : MonoBehaviour
 
     //Properties
     public Vector3 BulletTrailStartPos { get; set; }
-    public int Damage { get; set; }
+    public float Damage { get; set; }
 
     private void Awake()
     {
@@ -50,8 +50,12 @@ public class Projectile : MonoBehaviour
         if (Physics.Linecast(startPoint, endPoint, out RaycastHit hit))
         {
             ApplyDamage(hit);
-            TrailRenderer trail = Instantiate(_bulletTrail, BulletTrailStartPos, Quaternion.identity);
-            StartCoroutine(SpawnTrail(trail, hit));
+
+            if (_bulletTrail != null)
+            {
+                TrailRenderer trail = Instantiate(_bulletTrail, BulletTrailStartPos, Quaternion.identity);
+                StartCoroutine(SpawnTrail(trail, hit));
+            }
 
             CreateImpactEffect(hit);
 

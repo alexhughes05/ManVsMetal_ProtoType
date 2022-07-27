@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class PlayerAim : MonoBehaviour
 {
     //Inspector Fields
-    [SerializeField] private Transform _playerBody;
+    [SerializeField] private Camera _playerCam;
     [SerializeField] private Vector3 _viewpointOffset;
     [SerializeField][Range(0.01f, 1f)] private float cameraSmoothSpeed;
     [SerializeField] private bool enableLerpedRotation;
@@ -26,8 +26,8 @@ public class PlayerAim : MonoBehaviour
 
     private void Awake()
     {
-        _rb = _playerBody.GetComponent<Rigidbody>();
-        _playerInputReader = _playerBody.GetComponent<PlayerInputReader>();
+        _rb = GetComponent<Rigidbody>();
+        _playerInputReader = GetComponent<PlayerInputReader>();
     }
     private void Start()
     {
@@ -52,8 +52,8 @@ public class PlayerAim : MonoBehaviour
     }
     private void LateUpdate()
     {
-        var desiredPosition = _playerBody.position + _viewpointOffset;
-        transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref _cameraVelocity, cameraSmoothSpeed);
+        var desiredPosition = transform.position + _viewpointOffset;
+        _playerCam.transform.position = Vector3.SmoothDamp(_playerCam.transform.position, desiredPosition, ref _cameraVelocity, cameraSmoothSpeed);
     }
 
     private void SyncRigidbodyYawWithCamera()
@@ -68,8 +68,8 @@ public class PlayerAim : MonoBehaviour
         _cameraYaw += _inputVector.x * _horizontalSensitivity * Time.deltaTime;
         var qRot = Quaternion.Euler(_cameraPitch, _cameraYaw, 0f);
         if (enableLerpedRotation)
-            transform.rotation = Quaternion.Lerp(transform.rotation, qRot, Time.deltaTime * rotationDampening);
+            _playerCam.transform.rotation = Quaternion.Lerp(_playerCam.transform.rotation, qRot, Time.deltaTime * rotationDampening);
         else
-            transform.rotation = qRot;
+            _playerCam.transform.rotation = qRot;
     }
 }

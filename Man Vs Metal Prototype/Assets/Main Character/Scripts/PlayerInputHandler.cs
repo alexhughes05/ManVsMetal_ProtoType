@@ -16,20 +16,23 @@ public class PlayerInputHandler : MonoBehaviour
     private PlayerInputReader _playerInputReader;
     private Movement _movement;
     private GroundChecker _groundChecker;
-    private Shooter _shooter;
+    private WeaponController _weaponController;
 
     private void Awake()
     {
         _playerInputReader = GetComponent<PlayerInputReader>();
         _movement = GetComponent<Movement>();
         _groundChecker = GetComponent<GroundChecker>();
-        _shooter = FindObjectOfType<Shooter>();
+        _weaponController = FindObjectOfType<WeaponController>();
     }
     private void Start()
     {
         _jumpTimer = -1;
         _playerInputReader.JumpInput += JumpInputHandler;
-        _playerInputReader.ShootInput += _shooter.Shoot;
+        _playerInputReader.ShootInput += _weaponController.Shoot;
+        _playerInputReader.Scope += _weaponController.Scope;
+        _playerInputReader.Reload += _weaponController.Reload;
+        _playerInputReader.FireModeToggle += _weaponController.ChangeFireMode;
     }
 
     private void Update()
