@@ -2076,7 +2076,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _loadout:
   - {fileID: 11400000, guid: c9d9f0605b2ff7f4f80d9a514ab7d662, type: 2}
-  _shootSfx: {fileID: 1828579300}
+  _shooterAudioSource: {fileID: 1828579300}
   _crossHair: {fileID: 1755692523}
   _weaponParent: {fileID: 780297248}
 --- !u!1 &1267617861 stripped
@@ -3282,7 +3282,7 @@ GameObject:
   - component: {fileID: 1828579299}
   - component: {fileID: 1828579300}
   m_Layer: 0
-  m_Name: Weapon
+  m_Name: Shooter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
