@@ -13,12 +13,16 @@ public class Shooter : ScriptableObject
     public int clipSize;
     [Header("Sound Effects")]
     public AudioClip gunFireSfx;
+    [Range(0, 1)]
+    public float pitchRandomization;
     public AudioClip reloadSfx;
     public AudioClip dryTrigger;
     [Header("Settings")]
     public float damage;
     public float muzzleVelocity;
     public FireModes[] fireModes;
+    public int burstRounds;
+    public float timeBtwBursts;
     public float fireRate;
     public float aimSpeed;
     public float bloom;

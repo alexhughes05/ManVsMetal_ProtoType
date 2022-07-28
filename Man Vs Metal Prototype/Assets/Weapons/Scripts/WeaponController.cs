@@ -5,7 +5,7 @@ public class WeaponController : MonoBehaviour
 {
     //Inspector
     [SerializeField] private Shooter[] _loadout;
-    [SerializeField] private AudioSource _shootSfx;
+    [SerializeField] private AudioSource _shooterAudioSource;
     [SerializeField] private Canvas _crossHair;
     [SerializeField] private Transform _weaponParent;
 
@@ -24,6 +24,10 @@ public class WeaponController : MonoBehaviour
     private GameObject _currentWeapon;
     private Shooter _currentShooterData;
     private int _currentFireModeIndex;
+    //Shooting Info
+    private Coroutine _shootingCoroutine;
+    private bool _repeatedShooting;
+    private int _remainingProjectilesInBurst = -1;
     private float _timeRemainingUntilNextShot;
     private bool _isReloading;
     //Ammo
@@ -50,18 +54,46 @@ public class WeaponController : MonoBehaviour
         Debug.Log("Total ammo is: " + _totalProjectilesRemaining);
         Debug.Log("Ammo left in clip: " + _projectilesLeftInClip);
 
+        if (_currentWeapon)
+            Debug.Log("Current FireMode is: " + _currentShooterData.fireModes[_currentFireModeIndex]);
+
         //Always aim weapon holder towards the reticle on the screen (center of camera)
         _weaponParent.rotation = cam.transform.rotation;
 
-        if (_timeRemainingUntilNextShot > 0)
-            _timeRemainingUntilNextShot -= Time.deltaTime;
+        UpdateTimeUntilNextShot();
 
         if (_computeRecoil)
             _computeRecoil = _recoil.CalculateRecoil(_currentWeapon.transform.GetChild(0));
     }
-    public void Shoot()
+
+    public void ShootingHandler(bool shootingTriggerHeldDown)
     {
-        if (_currentWeapon != null)
+        if (_currentWeapon)
+        {
+            //Initialize burstRounds
+            if (_remainingProjectilesInBurst <= 0 && !_repeatedShooting)
+                _remainingProjectilesInBurst = _currentShooterData.burstRounds - 1;
+
+            if (shootingTriggerHeldDown)
+            {
+                if (_totalProjectilesRemaining <= 0 && !_currentShooterData.unlimitedAmmo)
+                {
+                    PlayShooterSfx(_currentShooterData.dryTrigger, false);
+                }
+                else
+                    _shootingCoroutine = StartCoroutine(AttemptToShoot());
+            }
+            else
+            {
+                if (_currentShooterData.fireModes[_currentFireModeIndex] == FireModes.FullAuto)
+                    StopCoroutine(_shootingCoroutine);
+            }
+        }
+    }
+
+    private IEnumerator AttemptToShoot()
+    {
+        do
         {
             if (_timeRemainingUntilNextShot <= 0 && _isReloading == false)
             {
@@ -74,51 +106,73 @@ public class WeaponController : MonoBehaviour
                         _muzzleFlash.Play();
 
                     //Shot Sound
-                    if (_shootSfx != null)
-                    {
-                        _shootSfx.Stop();
-                        _shootSfx.clip = _currentShooterData.gunFireSfx;
-                        _shootSfx.Play();
-                    }
+                    PlayShooterSfx(_currentShooterData.gunFireSfx, true);
 
-                    for (int i = 0; i < _currentShooterData.numOfProjectiles; i++)
-                    {
-                        var bullet = SpawnBullet();
-
-                        _projectileScript = bullet.GetComponent<Projectile>();
-                        _projectileScript.Damage = _currentShooterData.damage;
-
-                        Vector3 currentBloom = cam.transform.position + cam.transform.forward * 1000;
-                        currentBloom += Random.Range(-_currentShooterData.bloom, _currentShooterData.bloom) * cam.transform.up;
-                        currentBloom += Random.Range(-_currentShooterData.bloom, _currentShooterData.bloom) * cam.transform.right;
-                        currentBloom -= cam.transform.position;
-                        currentBloom.Normalize();
-
-                        _projectileScript.ApplyForceOnProjectile(currentBloom * _currentShooterData.muzzleVelocity, ForceMode.Impulse);
-                        _projectileScript.BulletTrailStartPos = _muzzle.position;
-                    }
+                    ShootProjectile();
 
                     _computeRecoil = true;
                     _recoil.InitiateRecoil();
 
-                    if (!_currentShooterData.unlimitedAmmo)
-                    {
-                        --_totalProjectilesRemaining;
-                        --_projectilesLeftInClip;
+                    ExecuteFireModesLogic(out _repeatedShooting);
 
-                        if (_projectilesLeftInClip <= 0 && _totalProjectilesRemaining > 0 && !_currentShooterData.unlimitedAmmo)
-                            Reload();
-                    }
+                    UpdateAmmoAndReloadIfNeeded();
+                }
+            }
+            yield return null;
+
+        } while (_repeatedShooting);
+
+        void ShootProjectile()
+        {
+            for (int i = 0; i < _currentShooterData.numOfProjectiles; i++)
+            {
+                var bullet = SpawnBullet();
+
+                _projectileScript = bullet.GetComponent<Projectile>();
+                _projectileScript.Damage = _currentShooterData.damage;
+
+                Vector3 currentBloom = cam.transform.position + cam.transform.forward * 1000;
+                currentBloom += Random.Range(-_currentShooterData.bloom, _currentShooterData.bloom) * cam.transform.up;
+                currentBloom += Random.Range(-_currentShooterData.bloom, _currentShooterData.bloom) * cam.transform.right;
+                currentBloom -= cam.transform.position;
+                currentBloom.Normalize();
+
+                _projectileScript.ApplyForceOnProjectile(currentBloom * _currentShooterData.muzzleVelocity, ForceMode.Impulse);
+                _projectileScript.BulletTrailStartPos = _muzzle.position;
+            }
+        }
+
+        void UpdateAmmoAndReloadIfNeeded()
+        {
+            if (!_currentShooterData.unlimitedAmmo)
+            {
+                --_totalProjectilesRemaining;
+                --_projectilesLeftInClip;
+
+                if (_projectilesLeftInClip <= 0 && _totalProjectilesRemaining > 0 && !_currentShooterData.unlimitedAmmo)
+                    Reload();
+            }
+        }
+
+        void ExecuteFireModesLogic(out bool repeatedShooting)
+        {
+            if (_currentShooterData.fireModes[_currentFireModeIndex] == FireModes.SemiAuto)
+                repeatedShooting = false;
+            else if (_currentShooterData.fireModes[_currentFireModeIndex] == FireModes.Burst)
+            {
+                if (_remainingProjectilesInBurst > 0)
+                {
+                    repeatedShooting = true;
+                    --_remainingProjectilesInBurst;
                 }
                 else
                 {
-                    if (_shootSfx != null)
-                    {
-                        _shootSfx.clip = _currentShooterData.dryTrigger;
-                        _shootSfx.Play();
-                    }
+                    repeatedShooting = false;
+                    _timeRemainingUntilNextShot += _currentShooterData.timeBtwBursts;
                 }
             }
+            else
+                repeatedShooting = true;
         }
     }
     public void Scope(bool isScoping)
@@ -142,6 +196,12 @@ public class WeaponController : MonoBehaviour
 
     public void Reload()
     {
+        if (_currentShooterData.fireModes[_currentFireModeIndex] == FireModes.Burst)
+        {
+            _remainingProjectilesInBurst = _currentShooterData.burstRounds - 1;
+            StopCoroutine(_shootingCoroutine);
+        }
+
         _isReloading = true;
 
         if (_totalProjectilesRemaining > _currentShooterData.clipSize)
@@ -151,22 +211,6 @@ public class WeaponController : MonoBehaviour
 
         StartCoroutine(ReloadAfterAudioClipIsDonePlaying());
     }
-
-    private IEnumerator ReloadAfterAudioClipIsDonePlaying()
-    {
-        while (_shootSfx.isPlaying)
-        {           
-            yield return null;
-        }
-
-        if (_shootSfx != null)
-        {
-            _shootSfx.clip = _currentShooterData.reloadSfx;
-            _shootSfx.Play();
-            yield return new WaitForSeconds(_currentShooterData.reloadSfx.length);
-            _isReloading = false;
-        }
-    }
     public void ChangeFireMode()
     {
         if (_currentShooterData.fireModes.Length <= 1)
@@ -174,7 +218,54 @@ public class WeaponController : MonoBehaviour
 
         _currentFireModeIndex = ++_currentFireModeIndex % _currentShooterData.fireModes.Length;
     }
+    private void UpdateTimeUntilNextShot()
+    {
+        if (_timeRemainingUntilNextShot > 0)
+            _timeRemainingUntilNextShot -= Time.deltaTime;
+    }
+    private IEnumerator ReloadAfterAudioClipIsDonePlaying()
+    {
+        while (_shooterAudioSource.isPlaying)
+        {
+            yield return null;
+        }
 
+        if (_shooterAudioSource != null)
+        {
+            _shooterAudioSource.pitch = 1;
+            _shooterAudioSource.clip = _currentShooterData.reloadSfx;
+            _shooterAudioSource.Play();
+            yield return new WaitForSeconds(_currentShooterData.reloadSfx.length);
+            _isReloading = false;
+        }
+    }
+    private IEnumerator ExecuteScopeEffect(Vector3 endValue, float duration)
+    {
+        var startValue = _anchor.localPosition;
+
+        var time = 0f;
+
+        while (time < duration)
+        {
+            _anchor.localPosition = Vector3.Lerp(startValue, endValue, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+        _anchor.localPosition = endValue;
+    }
+    private void PlayShooterSfx(AudioClip audioClip, bool randomizePitch)
+    {
+        if (_shooterAudioSource != null)
+        {
+            if (randomizePitch)
+                _shooterAudioSource.pitch = 1 - _currentShooterData.pitchRandomization + Random.Range(-_currentShooterData.pitchRandomization, _currentShooterData.pitchRandomization);
+            else
+                _shooterAudioSource.pitch = 1;
+
+            _shooterAudioSource.clip = audioClip;
+            _shooterAudioSource.Play();
+        }
+    }
     private void Equip(int weaponIndex)
     {
         if (_currentWeapon != null) Destroy(_currentWeapon);
@@ -201,20 +292,6 @@ public class WeaponController : MonoBehaviour
             _totalProjectilesRemaining = _currentShooterData.maxAmmo;
             _projectilesLeftInClip = _currentShooterData.clipSize;
         }
-    }
-    private IEnumerator ExecuteScopeEffect(Vector3 endValue, float duration)
-    {
-        var startValue = _anchor.localPosition;
-
-        var time = 0f;
-
-        while (time < duration)
-        {
-            _anchor.localPosition = Vector3.Lerp(startValue, endValue, time / duration);
-            time += Time.deltaTime;
-            yield return null;
-        }
-        _anchor.localPosition = endValue;
     }
     private GameObject SpawnBullet()
     {

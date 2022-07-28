@@ -10,28 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac62068696c5d4d4c9eefe22c13184ff, type: 3}
-  m_Name: Revolver
+  m_Name: Assault Rifle
   m_EditorClassIdentifier: 
-  _prefab: {fileID: 4273500393004741040, guid: 181e18fec31179246a14003b7e832532, type: 3}
+  _prefab: {fileID: 6674064720889540620, guid: 3bc9a22fb244a584d850a3d137f770e8, type: 3}
   projectile: {fileID: 4756692322364726346, guid: bee920cc3b5552a4cbb0afe211a0e77b, type: 3}
   unlimitedAmmo: 0
-  maxAmmo: 36
-  clipSize: 12
-  gunFireSfx: {fileID: 8300000, guid: 67022a5432c4bd2419f115fe613d8eb8, type: 3}
-  pitchRandomization: 0.1
-  reloadSfx: {fileID: 8300000, guid: fea4f4b6b743dc14da4ea5c4feca2778, type: 3}
+  maxAmmo: 120
+  clipSize: 30
+  gunFireSfx: {fileID: 8300000, guid: 7197d3938b44f3943864dfdd01799b1b, type: 3}
+  pitchRandomization: 0.07
+  reloadSfx: {fileID: 8300000, guid: 13419d22e766a3249b1332ad3cca8bda, type: 3}
   dryTrigger: {fileID: 8300000, guid: 97bdb2867be349f4eb67a1480d6116b2, type: 3}
-  damage: 1.5
+  damage: 1
   muzzleVelocity: 1000
-  fireModes: 00000000
-  burstRounds: 0
-  timeBtwBursts: 0
-  fireRate: 2
+  fireModes: 0200000001000000
+  burstRounds: 3
+  timeBtwBursts: 0.2
+  fireRate: 10
   aimSpeed: 10
   bloom: 1
   numOfProjectiles: 1
-  recoilX: -50
-  recoilY: 5
+  recoilX: -7
+  recoilY: 2
   recoilZ: 1
   snappiness: 20
   returnSpeed: 2

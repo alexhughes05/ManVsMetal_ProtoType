@@ -29,7 +29,7 @@ public class PlayerInputHandler : MonoBehaviour
     {
         _jumpTimer = -1;
         _playerInputReader.JumpInput += JumpInputHandler;
-        _playerInputReader.ShootInput += _weaponController.Shoot;
+        _playerInputReader.ShootInput += _weaponController.ShootingHandler;
         _playerInputReader.Scope += _weaponController.Scope;
         _playerInputReader.Reload += _weaponController.Reload;
         _playerInputReader.FireModeToggle += _weaponController.ChangeFireMode;

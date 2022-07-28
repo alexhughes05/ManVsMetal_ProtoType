@@ -14,14 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _prefab: {fileID: 1624066842687290335, guid: 9ac48aa25b014234788bc48a850d33e9, type: 3}
   projectile: {fileID: 4756692322364726346, guid: 728ba9bfa6c288c4899e2e5dbb865fcf, type: 3}
+  unlimitedAmmo: 0
   maxAmmo: 15
   clipSize: 1
   gunFireSfx: {fileID: 8300000, guid: b8fb3b0e09c23834da2798615a3e8cc0, type: 3}
+  pitchRandomization: 0.1
   reloadSfx: {fileID: 8300000, guid: 690fac1847271994db1c60059ce35864, type: 3}
   dryTrigger: {fileID: 8300000, guid: 97bdb2867be349f4eb67a1480d6116b2, type: 3}
   damage: 0.5
   muzzleVelocity: 500
   fireModes: 00000000
+  burstRounds: 0
+  timeBtwBursts: 0
   fireRate: 3
   aimSpeed: 10
   bloom: 25
