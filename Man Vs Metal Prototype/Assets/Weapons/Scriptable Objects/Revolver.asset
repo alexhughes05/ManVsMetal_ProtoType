@@ -30,8 +30,8 @@ MonoBehaviour:
   aimSpeed: 10
   bloom: 1
   numOfProjectiles: 1
-  recoilX: -50
+  recoilX: -20
   recoilY: 5
   recoilZ: 1
-  snappiness: 20
-  returnSpeed: 2
+  snappiness: 10
+  returnSpeed: 0.7
