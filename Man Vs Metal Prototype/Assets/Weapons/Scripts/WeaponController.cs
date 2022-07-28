@@ -63,7 +63,8 @@ public class WeaponController : MonoBehaviour
         UpdateTimeUntilNextShot();
 
         if (_computeRecoil)
-            _computeRecoil = _recoil.CalculateRecoil(_currentWeapon.transform.GetChild(0));
+            _computeRecoil = _recoil.CalculateRecoil(GetComponent<PlayerAim>());
+            //_computeRecoil = _recoil.CalculateRecoil(_currentWeapon.transform.GetChild(0));
     }
 
     public void ShootingHandler(bool shootingTriggerHeldDown)
@@ -320,11 +321,12 @@ public class Recoil
         _returnSpeed = returnSpeed;
     }
 
-    public bool CalculateRecoil(Transform gameObjectTransform)
+    public bool CalculateRecoil(PlayerAim _playerAimScript)
     {
         _targetRotation = Vector3.Lerp(_targetRotation, Vector3.zero, _returnSpeed / 25f);
         _currentRotation = Vector3.Slerp(_currentRotation, _targetRotation, _snappiness * Time.deltaTime);
-        gameObjectTransform.localRotation = Quaternion.Euler(_currentRotation);
+        _playerAimScript.RecoilRotation = Quaternion.Euler(_currentRotation);
+        //gameObjectTransform.localRotation = Quaternion.Euler(_currentRotation);
 
         if (_currentRotation != _targetRotation)
             return true;

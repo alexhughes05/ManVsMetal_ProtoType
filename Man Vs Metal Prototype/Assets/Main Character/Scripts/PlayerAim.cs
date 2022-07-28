@@ -24,6 +24,8 @@ public class PlayerAim : MonoBehaviour
     private Rigidbody _rb;
     private PlayerInputReader _playerInputReader;
 
+    public Quaternion RecoilRotation { get; set; }
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
@@ -67,6 +69,7 @@ public class PlayerAim : MonoBehaviour
         _cameraPitch = Mathf.Clamp(_cameraPitch, -90, 90);
         _cameraYaw += _inputVector.x * _horizontalSensitivity * Time.deltaTime;
         var qRot = Quaternion.Euler(_cameraPitch, _cameraYaw, 0f);
+        qRot *= RecoilRotation;
         if (enableLerpedRotation)
             _playerCam.transform.rotation = Quaternion.Lerp(_playerCam.transform.rotation, qRot, Time.deltaTime * rotationDampening);
         else
