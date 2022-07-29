@@ -8,11 +8,11 @@ public class PlayerInputReader : MonoBehaviour
     //Input Properties
     public event Action JumpInput;
     public event Action Mele;
+    public event Action Crouch;
     public event Action Reload;
     public event Action FireModeToggle;
     public event Action<bool> ShootInput;
     public event Action<bool> Scope;
-    public event Action<bool> Crouch;
     public event Action<bool> Sprint;
 
     private void Awake()
@@ -24,6 +24,8 @@ public class PlayerInputReader : MonoBehaviour
         PlayerInputActions.Player.Jump.performed += _ => JumpInput?.Invoke();
         //Mele
         PlayerInputActions.Player.Mele.performed += _ => Mele?.Invoke();
+        //Crouch
+        PlayerInputActions.Player.Crouch.performed += _ => Crouch?.Invoke();
         //Reload
         PlayerInputActions.Player.Reload.performed += _ => Reload?.Invoke();
         //FireModeToggle
@@ -34,9 +36,6 @@ public class PlayerInputReader : MonoBehaviour
         //Scope
         PlayerInputActions.Player.Scope.performed += _ => Scope?.Invoke(true);
         PlayerInputActions.Player.Scope.canceled += _ => Scope?.Invoke(false);
-        //Crouch
-        PlayerInputActions.Player.Crouch.performed += _ => Crouch?.Invoke(true);
-        PlayerInputActions.Player.Crouch.canceled += _ => Crouch?.Invoke(false);
         //Sprint
         PlayerInputActions.Player.Sprint.performed += _ => Sprint?.Invoke(true);
         PlayerInputActions.Player.Sprint.canceled += _ => Sprint?.Invoke(false);

@@ -5,6 +5,7 @@ public class PlayerAim : MonoBehaviour
 {
     //Inspector Fields
     [SerializeField] private Camera _playerCam;
+    [SerializeField] private Transform _viewPointPosition;
     [SerializeField] private Vector3 _viewpointOffset;
     [SerializeField][Range(0.01f, 1f)] private float cameraSmoothSpeed;
     [SerializeField] private bool enableLerpedRotation;
@@ -54,7 +55,7 @@ public class PlayerAim : MonoBehaviour
     }
     private void LateUpdate()
     {
-        var desiredPosition = transform.position + _viewpointOffset;
+        var desiredPosition = _viewPointPosition.position + _viewpointOffset;
         _playerCam.transform.position = Vector3.SmoothDamp(_playerCam.transform.position, desiredPosition, ref _cameraVelocity, cameraSmoothSpeed);
     }
 

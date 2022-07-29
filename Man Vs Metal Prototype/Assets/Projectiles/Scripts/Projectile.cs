@@ -21,6 +21,7 @@ public class Projectile : MonoBehaviour
     //Properties
     public Vector3 BulletTrailStartPos { get; set; }
     public float Damage { get; set; }
+    public event Action DamageableCollision;
 
     private void Awake()
     {
@@ -42,7 +43,7 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    public bool CheckForProjetileCollision(Vector3 startPoint, Vector3 endPoint)
+    private bool CheckForProjetileCollision(Vector3 startPoint, Vector3 endPoint)
     {
         bool detectedHit = false;
         Debug.DrawLine(startPoint, endPoint, Color.yellow, 5f);
@@ -76,6 +77,7 @@ public class Projectile : MonoBehaviour
         Damageable damageable = hit.collider.transform.root.gameObject.GetComponent<Damageable>();
         if (damageable)
         {
+            DamageableCollision.Invoke();
             var damageEffectiveZone = hit.collider.gameObject.GetComponent<DamageEffectivenessZone>();
             var damageMultiplier = damageEffectiveZone ? damageEffectiveZone.DamageMultiplier : 1;
             damageable.TakeDamage(Damage * damageMultiplier);

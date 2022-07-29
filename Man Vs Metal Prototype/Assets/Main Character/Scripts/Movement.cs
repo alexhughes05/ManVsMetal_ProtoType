@@ -19,12 +19,15 @@ public class Movement : MonoBehaviour
     private GroundChecker _groundChecker;
     private PlayerInputReader _playerInputReader;
 
+    public float CurrentSpeed { get { return _speed; } set { _speed = value; } }
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
         _groundChecker = GetComponent<GroundChecker>();
         _playerInputReader = GetComponent<PlayerInputReader>();
     }
+
     private void Update()
     {
         _inputVector = _playerInputReader.PlayerInputActions.Player.Movement.ReadValue<Vector2>();

@@ -5,12 +5,18 @@ using UnityEngine;
 public class PlayerInputHandler : MonoBehaviour
 {
     //Inspector fields
+    [Header("Jumping")]
     [SerializeField] private float _initialJumpForce;
     [SerializeField] private float _secondJumpForce;
     [SerializeField] private float _doubleJumpWindow;
+    [Header("Crouching")]
+    [SerializeField] private float _crouchSpeedMultiplier;
+    [Header("Sprinting")]
+    [SerializeField] private float _sprintSpeedMultiplier;
 
     //Private fields
     private float _jumpTimer;
+    private bool _isCrouching;
 
     //Components and References
     private PlayerInputReader _playerInputReader;
@@ -33,6 +39,8 @@ public class PlayerInputHandler : MonoBehaviour
         _playerInputReader.Scope += _weaponController.Scope;
         _playerInputReader.Reload += _weaponController.Reload;
         _playerInputReader.FireModeToggle += _weaponController.ChangeFireMode;
+        _playerInputReader.Crouch += CrouchHandler;
+        _playerInputReader.Sprint += SprintHandler;
     }
 
     private void Update()
@@ -57,6 +65,30 @@ public class PlayerInputHandler : MonoBehaviour
             ResetJumpTimer();
             _movement.AddToMovementVector(new Vector3(0, _secondJumpForce, 0));
         }
+    }
+    private void CrouchHandler()
+    {
+        _isCrouching = !_isCrouching;
+
+        if (_isCrouching) 
+        {
+            _movement.CurrentSpeed *= _crouchSpeedMultiplier;
+            transform.localScale = new Vector3(transform.localScale.x, 0.7f, transform.localScale.z);
+            transform.position -= new Vector3(0, 0.3f, 0);
+        }
+        else
+        {
+            _movement.CurrentSpeed /= _crouchSpeedMultiplier;
+            transform.localScale = new Vector3(transform.localScale.x, 1, transform.localScale.z);
+            transform.position += new Vector3(0, 0.3f, 0);
+        }
+    }
+    private void SprintHandler(bool shouldSprint)
+    {
+        if (shouldSprint)
+            _movement.CurrentSpeed *= _sprintSpeedMultiplier;
+        else
+            _movement.CurrentSpeed /= _sprintSpeedMultiplier;
     }
     private void StartJumpTimer()
     {

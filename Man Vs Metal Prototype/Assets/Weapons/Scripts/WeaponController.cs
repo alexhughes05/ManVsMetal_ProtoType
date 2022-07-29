@@ -1,13 +1,19 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WeaponController : MonoBehaviour
 {
     //Inspector
     [SerializeField] private Shooter[] _loadout;
-    [SerializeField] private AudioSource _shooterAudioSource;
-    [SerializeField] private Canvas _crossHair;
     [SerializeField] private Transform _weaponParent;
+    [SerializeField] private AudioSource _shooterAudioSource;
+    [SerializeField] private AudioClip _hitMarkerSfx;
+    [SerializeField] private Image _hitMarkerImage;
+    [SerializeField] private Canvas _crossHair;
+
+    //Colors
+    private Color clearWhite = new(1, 1, 1, 0);
 
     //Prefab Transforms
     private Transform _anchor;
@@ -30,6 +36,8 @@ public class WeaponController : MonoBehaviour
     private int _remainingProjectilesInBurst = -1;
     private float _timeRemainingUntilNextShot;
     private bool _isReloading;
+    //Hitmarker
+    private float _hitMarkerOpaqueTime;
     //Ammo
     private int _totalProjectilesRemaining = -1;
     private int _projectilesLeftInClip = -1;
@@ -47,6 +55,7 @@ public class WeaponController : MonoBehaviour
 
     private void Start()
     {
+        _hitMarkerImage.color = clearWhite;
         Equip(0);
     }
     void Update()
@@ -62,9 +71,20 @@ public class WeaponController : MonoBehaviour
 
         UpdateTimeUntilNextShot();
 
+        //Will decrement the hitmarker opaque time and make it fade out when the time is 0
+        UpdateHitmarkerOpaqueTime();
+
         if (_computeRecoil)
             _computeRecoil = _recoil.CalculateRecoil(GetComponent<PlayerAim>());
-            //_computeRecoil = _recoil.CalculateRecoil(_currentWeapon.transform.GetChild(0));
+        //_computeRecoil = _recoil.CalculateRecoil(_currentWeapon.transform.GetChild(0));
+    }
+
+    private void UpdateHitmarkerOpaqueTime()
+    {
+        if (_hitMarkerOpaqueTime > 0)
+            _hitMarkerOpaqueTime -= Time.deltaTime;
+        else if (_hitMarkerImage.color.a > 0)
+            _hitMarkerImage.color = Color.Lerp(_hitMarkerImage.color, clearWhite, Time.deltaTime * 1.5f);
     }
 
     public void ShootingHandler(bool shootingTriggerHeldDown)
@@ -130,6 +150,7 @@ public class WeaponController : MonoBehaviour
                 var bullet = SpawnBullet();
 
                 _projectileScript = bullet.GetComponent<Projectile>();
+                _projectileScript.DamageableCollision += ProjectileDamageableCollisionHandler;
                 _projectileScript.Damage = _currentShooterData.damage;
 
                 Vector3 currentBloom = cam.transform.position + cam.transform.forward * 1000;
@@ -233,9 +254,7 @@ public class WeaponController : MonoBehaviour
 
         if (_shooterAudioSource != null)
         {
-            _shooterAudioSource.pitch = 1;
-            _shooterAudioSource.clip = _currentShooterData.reloadSfx;
-            _shooterAudioSource.Play();
+            PlayShooterSfx(_currentShooterData.reloadSfx, false);
             yield return new WaitForSeconds(_currentShooterData.reloadSfx.length);
             _isReloading = false;
         }
@@ -254,7 +273,7 @@ public class WeaponController : MonoBehaviour
         }
         _anchor.localPosition = endValue;
     }
-    private void PlayShooterSfx(AudioClip audioClip, bool randomizePitch)
+    private void PlayShooterSfx(AudioClip audioClip,bool randomizePitch)
     {
         if (_shooterAudioSource != null)
         {
@@ -285,7 +304,8 @@ public class WeaponController : MonoBehaviour
         _hipState = _currentWeapon.transform.Find("States/Hip");
         _aimState = _currentWeapon.transform.Find("States/Aim");
         _muzzle = _currentWeapon.transform.Find("Anchor/Resources/Muzzle");
-        _muzzleFlash = _muzzle.GetChild(0).GetComponent<ParticleSystem>();
+        if (_muzzle.childCount > 0)
+            _muzzleFlash = _muzzle.GetChild(0).GetComponent<ParticleSystem>();
 
         //Initialize ammo
         if (_totalProjectilesRemaining == -1)
@@ -299,6 +319,17 @@ public class WeaponController : MonoBehaviour
         var bullet = Instantiate(_currentShooterData.projectile, cam.transform.position, cam.transform.rotation);
         bullet.transform.localEulerAngles = new Vector3(bullet.transform.localEulerAngles.x + 90, bullet.transform.localEulerAngles.y, bullet.transform.localEulerAngles.z);
         return bullet;
+    }
+
+    //Callbacks
+    private void ProjectileDamageableCollisionHandler()
+    {
+        //Show hitmarker
+        _hitMarkerImage.color = Color.white;
+        _shooterAudioSource.pitch = 1;
+        if (_hitMarkerSfx != null)
+            _shooterAudioSource.PlayOneShot(_hitMarkerSfx);
+        _hitMarkerOpaqueTime = 0.5f;
     }
 }
 
