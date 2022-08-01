@@ -114,5 +114,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _impactForce: 2
+  _maxLifeTime: 2
   _bulletTrail: {fileID: 0}
   _defaultImpactEffect: {fileID: 3466726706656736195, guid: edbda0252689cd04797dac5fee8dc9c8, type: 3}

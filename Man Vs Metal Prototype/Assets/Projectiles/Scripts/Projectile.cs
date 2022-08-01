@@ -46,10 +46,12 @@ public class Projectile : MonoBehaviour
     private bool CheckForProjetileCollision(Vector3 startPoint, Vector3 endPoint)
     {
         bool detectedHit = false;
-        Debug.DrawLine(startPoint, endPoint, Color.yellow, 5f);
+        //Debug.DrawLine(startPoint, endPoint, Color.yellow, 5f);
 
         if (Physics.Linecast(startPoint, endPoint, out RaycastHit hit))
         {
+            detectedHit = true;
+
             ApplyDamage(hit);
 
             if (_bulletTrail != null)
@@ -65,13 +67,15 @@ public class Projectile : MonoBehaviour
             if (hitRb != null)
                 hitRb.AddForce((endPoint - startPoint).normalized * _impactForce / hitRb.mass, ForceMode.Impulse);
 
-            detectedHit = true;
+            var explodable = GetComponent<Explodable>();
+            if (explodable != null)
+                explodable.TriggerExplosion(transform.position);
+
+            Destroy(gameObject);
         }
-        StartCoroutine(DestroyProjectileAfterDelay(gameObject, 2f));
 
         return detectedHit;
     }
-
     private void ApplyDamage(RaycastHit hit)
     {
         Damageable damageable = hit.collider.transform.root.gameObject.GetComponent<Damageable>();
@@ -83,18 +87,10 @@ public class Projectile : MonoBehaviour
             damageable.TakeDamage(Damage * damageMultiplier);
         }
     }
-
     public void ApplyForceOnProjectile(Vector3 forceVector, ForceMode forceMode)
     {
         _rb.AddForce(forceVector, forceMode);
     }
-
-    private IEnumerator DestroyProjectileAfterDelay(GameObject go, float delayAmount)
-    {
-        yield return new WaitForSeconds(delayAmount);
-        Destroy(go, delayAmount);
-    }
-
     private IEnumerator SpawnTrail(TrailRenderer trail, RaycastHit hit)
     {
         float time = 0;
@@ -111,7 +107,6 @@ public class Projectile : MonoBehaviour
         Destroy(trail.gameObject, trail.time);
         Destroy(gameObject);
     }
-
     private void CreateImpactEffect(RaycastHit hit)
     {
         ParticleSystem impactPs;

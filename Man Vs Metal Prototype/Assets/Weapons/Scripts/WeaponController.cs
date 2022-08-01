@@ -11,6 +11,8 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private AudioClip _hitMarkerSfx;
     [SerializeField] private Image _hitMarkerImage;
     [SerializeField] private Canvas _crossHair;
+    [SerializeField] private bool _visualizeProjectile;
+    [SerializeField] private LayerMask _visualProjectileLayerMask;
 
     //Colors
     private Color clearWhite = new(1, 1, 1, 0);
@@ -25,7 +27,7 @@ public class WeaponController : MonoBehaviour
     //Coroutines
     private Coroutine _scopeCoroutine;
     //Camera
-    private Camera cam;
+    private Camera _cam;
     //Weapon Info 
     private GameObject _currentWeapon;
     private Shooter _currentShooterData;
@@ -45,12 +47,11 @@ public class WeaponController : MonoBehaviour
     private bool _computeRecoil;
 
     //Components/References
-    private Projectile _projectileScript;
     private Recoil _recoil;
 
     private void Awake()
     {
-        cam = Camera.main;
+        _cam = Camera.main;
     }
 
     private void Start()
@@ -67,7 +68,7 @@ public class WeaponController : MonoBehaviour
             Debug.Log("Current FireMode is: " + _currentShooterData.fireModes[_currentFireModeIndex]);
 
         //Always aim weapon holder towards the reticle on the screen (center of camera)
-        _weaponParent.rotation = cam.transform.rotation;
+        _weaponParent.rotation = _cam.transform.rotation;
 
         UpdateTimeUntilNextShot();
 
@@ -145,22 +146,34 @@ public class WeaponController : MonoBehaviour
 
         void ShootProjectile()
         {
+            Projectile visualProjectile = null;
+
             for (int i = 0; i < _currentShooterData.numOfProjectiles; i++)
             {
-                var bullet = SpawnBullet();
+                var projectile = SpawnProjectile();
 
-                _projectileScript = bullet.GetComponent<Projectile>();
-                _projectileScript.DamageableCollision += ProjectileDamageableCollisionHandler;
-                _projectileScript.Damage = _currentShooterData.damage;
+                projectile.DamageableCollision += ProjectileDamageableCollisionHandler;
+                projectile.Damage = _currentShooterData.damage;
 
-                Vector3 currentBloom = cam.transform.position + cam.transform.forward * 1000;
-                currentBloom += Random.Range(-_currentShooterData.bloom, _currentShooterData.bloom) * cam.transform.up;
-                currentBloom += Random.Range(-_currentShooterData.bloom, _currentShooterData.bloom) * cam.transform.right;
-                currentBloom -= cam.transform.position;
-                currentBloom.Normalize();
+                //Calculate direction
+                var bloomX = Random.Range(-_currentShooterData.bloom, _currentShooterData.bloom);
+                var bloomY = Random.Range(-_currentShooterData.bloom, _currentShooterData.bloom);
+                var direction = CalculateDirection(_cam.transform.position, bloomX, bloomY);
 
-                _projectileScript.ApplyForceOnProjectile(currentBloom * _currentShooterData.muzzleVelocity, ForceMode.Impulse);
-                _projectileScript.BulletTrailStartPos = _muzzle.position;
+                projectile.ApplyForceOnProjectile(direction * _currentShooterData.muzzleVelocity, ForceMode.Impulse);
+
+                if (_visualizeProjectile)
+                {
+                    visualProjectile = SpawnProjectileVisualModel();
+                    if (visualProjectile != null)
+                    {
+                        //Calculate visual projectile direction
+                        direction = CalculateDirection(_muzzle.position, bloomX, bloomY);
+                        visualProjectile.ApplyForceOnProjectile(direction * _currentShooterData.muzzleVelocity, ForceMode.Impulse);
+                    }
+                }
+
+                projectile.BulletTrailStartPos = _muzzle.position;
             }
         }
 
@@ -197,6 +210,19 @@ public class WeaponController : MonoBehaviour
                 repeatedShooting = true;
         }
     }
+
+    private Vector3 CalculateDirection(Vector3 initialPos, float bloomX, float bloomY)
+    {
+        Physics.Raycast(_cam.transform.position, _cam.transform.forward, out RaycastHit hit, Mathf.Infinity, _visualProjectileLayerMask);
+        var hitDirection = (hit.point - initialPos).normalized;
+        
+        Vector3 currentBloom = initialPos + hitDirection * 1000f;
+        currentBloom += bloomX * _cam.transform.up;
+        currentBloom += bloomY * _cam.transform.right;
+        var direction = currentBloom - initialPos;
+        return direction.normalized;
+    }
+
     public void Scope(bool isScoping)
     {
         if (isScoping)
@@ -314,11 +340,29 @@ public class WeaponController : MonoBehaviour
             _projectilesLeftInClip = _currentShooterData.clipSize;
         }
     }
-    private GameObject SpawnBullet()
+    private Projectile SpawnProjectile()
     {
-        var bullet = Instantiate(_currentShooterData.projectile, cam.transform.position, cam.transform.rotation);
+        var bullet = Instantiate(_currentShooterData.projectile, _cam.transform.position, _cam.transform.rotation);
         bullet.transform.localEulerAngles = new Vector3(bullet.transform.localEulerAngles.x + 90, bullet.transform.localEulerAngles.y, bullet.transform.localEulerAngles.z);
-        return bullet;
+        return bullet.GetComponent<Projectile>();
+    }
+
+    private Projectile SpawnProjectileVisualModel()
+    {;
+
+        var visualBullet = Instantiate(_currentShooterData.projectile, _muzzle.position, _muzzle.rotation);
+
+        //Turn on the mesh renderer so you can see the projectile
+        visualBullet.GetComponent<MeshRenderer>().enabled = true;
+        foreach (var component in visualBullet.GetComponents<Component>())
+        {
+            if (component is Transform || component is MeshRenderer || component is MeshFilter || component is Rigidbody)
+                continue;
+
+            Destroy(component);
+        }
+        visualBullet.transform.localEulerAngles = new Vector3(visualBullet.transform.localEulerAngles.x + 90, visualBullet.transform.localEulerAngles.y, visualBullet.transform.localEulerAngles.z);
+        return visualBullet.GetComponent<Projectile>();
     }
 
     //Callbacks

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Grenade Launcher
   m_EditorClassIdentifier: 
   _prefab: {fileID: 932278657325257722, guid: 02a309b880cbc4448b713beac6d0c4f2, type: 3}
-  projectile: {fileID: 2342170514581384010, guid: 24ea94d27b18b0547bb31f85d29d1de8, type: 3}
+  projectile: {fileID: 4615358345657303796, guid: 24ea94d27b18b0547bb31f85d29d1de8, type: 3}
   unlimitedAmmo: 0
   maxAmmo: 15
   clipSize: 1
@@ -22,7 +22,7 @@ MonoBehaviour:
   reloadSfx: {fileID: 8300000, guid: b01210cbda9d2a249b02f3d7c9f3f5b8, type: 3}
   dryTrigger: {fileID: 8300000, guid: 97bdb2867be349f4eb67a1480d6116b2, type: 3}
   damage: 1
-  muzzleVelocity: 50
+  muzzleVelocity: 40
   fireModes: 00000000
   burstRounds: 0
   timeBtwBursts: 0

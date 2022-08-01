@@ -16,9 +16,9 @@ TagManager:
   - Obstacle
   - Hidden
   - Projectile
-  - CriticalHitZone
-  - NormalHitZone
-  - MinorHitZone
+  - Explosion
+  - 
+  - 
   - 
   - 
   - 
