@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4706939876495061202}
   - component: {fileID: 328621789431213768}
-  m_Layer: 1
+  m_Layer: 0
   m_Name: Hot Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}

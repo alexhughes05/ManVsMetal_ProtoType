@@ -9,7 +9,7 @@ public class PlayerInputReader : MonoBehaviour
     public event Action JumpInput;
     public event Action Mele;
     public event Action Crouch;
-    public event Action Reload;
+    public event Action<float> Reload;
     public event Action FireModeToggle;
     public event Action<bool> ShootInput;
     public event Action<bool> Scope;
@@ -27,7 +27,7 @@ public class PlayerInputReader : MonoBehaviour
         //Crouch
         PlayerInputActions.Player.Crouch.performed += _ => Crouch?.Invoke();
         //Reload
-        PlayerInputActions.Player.Reload.performed += _ => Reload?.Invoke();
+        PlayerInputActions.Player.Reload.performed += _ => Reload?.Invoke(0f);
         //FireModeToggle
         PlayerInputActions.Player.FireModeToggle.performed += _ => FireModeToggle?.Invoke();
         //Shooting

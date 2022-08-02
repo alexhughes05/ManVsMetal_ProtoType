@@ -114,6 +114,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _impactForce: 5
-  _maxLifeTime: 2
   _bulletTrail: {fileID: 328621789431213768, guid: 43559d27d223bf340b413fde1315c256, type: 3}
   _defaultImpactEffect: {fileID: 3466726706656736195, guid: edbda0252689cd04797dac5fee8dc9c8, type: 3}
+  _projectileLayerMask:
+    serializedVersion: 2
+    m_Bits: 14273
+  _visualizeProjectile: 0

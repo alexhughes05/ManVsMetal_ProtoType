@@ -11,6 +11,10 @@ public class Shooter : ScriptableObject
     public bool unlimitedAmmo;
     public int maxAmmo;
     public int clipSize;
+    [Header("Scope")]
+    public float scopeSpeed;
+    public GameObject scopeOverlay;
+    public float scopedFov;
     [Header("Sound Effects")]
     public AudioClip gunFireSfx;
     [Range(0, 1)]
@@ -20,11 +24,11 @@ public class Shooter : ScriptableObject
     [Header("Settings")]
     public float damage;
     public float muzzleVelocity;
+    public float timeToWaitAfterShotToReload;
     public FireModes[] fireModes;
     public int burstRounds;
     public float timeBtwBursts;
     public float fireRate;
-    public float aimSpeed;
     public float bloom;
     public float numOfProjectiles;
     [Header("Recoil")]

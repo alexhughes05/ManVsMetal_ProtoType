@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac62068696c5d4d4c9eefe22c13184ff, type: 3}
+  m_Name: L96 Sniper
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 3254493253534762904, guid: 4bbce759057af3a49a877fafcb9ffbe1, type: 3}
+  projectile: {fileID: 4756692322364726346, guid: bee920cc3b5552a4cbb0afe211a0e77b, type: 3}
+  unlimitedAmmo: 0
+  maxAmmo: 40
+  clipSize: 1
+  scopeSpeed: 10
+  scopeOverlay: {fileID: 7921499906856451152, guid: 4edfe62e0dbe66b419024f76837ca36a, type: 3}
+  scopedFov: 5
+  gunFireSfx: {fileID: 8300000, guid: 64f77b53ebe00324c8ba9f9fe1769962, type: 3}
+  pitchRandomization: 0.1
+  reloadSfx: {fileID: 8300000, guid: 323d44dbbcbfe0e449d38f457ecf6869, type: 3}
+  dryTrigger: {fileID: 8300000, guid: 97bdb2867be349f4eb67a1480d6116b2, type: 3}
+  damage: 4
+  muzzleVelocity: 1000
+  timeToWaitAfterShotToReload: 0.7
+  fireModes: 00000000
+  burstRounds: 0
+  timeBtwBursts: 0
+  fireRate: 3
+  bloom: 1
+  numOfProjectiles: 1
+  recoilX: -50
+  recoilY: 5
+  recoilZ: 1
+  snappiness: 10
+  returnSpeed: 0.5

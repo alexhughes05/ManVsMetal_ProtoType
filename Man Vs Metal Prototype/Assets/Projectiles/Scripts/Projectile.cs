@@ -9,6 +9,11 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float _impactForce;
     [SerializeField] private TrailRenderer _bulletTrail;
     [SerializeField] private ParticleSystem _defaultImpactEffect;
+    [SerializeField] public LayerMask _projectileLayerMask;
+    [SerializeField] public bool _visualizeProjectile;
+
+    public LayerMask ProjectileLayerMask { get => _projectileLayerMask; set => _projectileLayerMask = value; }
+    public bool VisualizeProjectile { get => _visualizeProjectile; set => _visualizeProjectile = value; }
 
     //Components/References
     private Rigidbody _rb;
@@ -21,7 +26,8 @@ public class Projectile : MonoBehaviour
     //Properties
     public Vector3 BulletTrailStartPos { get; set; }
     public float Damage { get; set; }
-    public event Action DamageableCollision;
+    public event Action DamageableProjectileCollision;
+    public event Action ProjectileCollision;
 
     private void Awake()
     {
@@ -46,11 +52,12 @@ public class Projectile : MonoBehaviour
     private bool CheckForProjetileCollision(Vector3 startPoint, Vector3 endPoint)
     {
         bool detectedHit = false;
-        //Debug.DrawLine(startPoint, endPoint, Color.yellow, 5f);
+        Debug.DrawLine(startPoint, endPoint, Color.yellow, 5f);
 
-        if (Physics.Linecast(startPoint, endPoint, out RaycastHit hit))
+        if (Physics.Linecast(startPoint, endPoint, out RaycastHit hit, ProjectileLayerMask))
         {
             detectedHit = true;
+            ProjectileCollision.Invoke();
 
             ApplyDamage(hit);
 
@@ -70,8 +77,6 @@ public class Projectile : MonoBehaviour
             var explodable = GetComponent<Explodable>();
             if (explodable != null)
                 explodable.TriggerExplosion(transform.position);
-
-            Destroy(gameObject);
         }
 
         return detectedHit;
@@ -81,7 +86,7 @@ public class Projectile : MonoBehaviour
         Damageable damageable = hit.collider.transform.root.gameObject.GetComponent<Damageable>();
         if (damageable)
         {
-            DamageableCollision.Invoke();
+            DamageableProjectileCollision.Invoke();
             var damageEffectiveZone = hit.collider.gameObject.GetComponent<DamageEffectivenessZone>();
             var damageMultiplier = damageEffectiveZone ? damageEffectiveZone.DamageMultiplier : 1;
             damageable.TakeDamage(Damage * damageMultiplier);
@@ -91,6 +96,18 @@ public class Projectile : MonoBehaviour
     {
         _rb.AddForce(forceVector, forceMode);
     }
+    public Vector3 CalculateProjectileDirection(Vector3 initialPos, Camera cam, float bloomX, float bloomY)
+    {
+        Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, Mathf.Infinity, _projectileLayerMask);
+        var hitDirection = (hit.point - initialPos).normalized;
+
+        Vector3 currentBloom = initialPos + hitDirection * 1000f;
+        currentBloom += bloomX * cam.transform.up;
+        currentBloom += bloomY * cam.transform.right;
+        var direction = currentBloom - initialPos;
+        return direction.normalized;
+    }
+
     private IEnumerator SpawnTrail(TrailRenderer trail, RaycastHit hit)
     {
         float time = 0;

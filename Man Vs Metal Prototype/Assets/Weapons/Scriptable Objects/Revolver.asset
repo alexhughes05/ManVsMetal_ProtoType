@@ -17,17 +17,20 @@ MonoBehaviour:
   unlimitedAmmo: 0
   maxAmmo: 36
   clipSize: 12
+  scopeSpeed: 10
+  scopeOverlay: {fileID: 0}
+  scopedFov: 0
   gunFireSfx: {fileID: 8300000, guid: 67022a5432c4bd2419f115fe613d8eb8, type: 3}
   pitchRandomization: 0.1
   reloadSfx: {fileID: 8300000, guid: fea4f4b6b743dc14da4ea5c4feca2778, type: 3}
   dryTrigger: {fileID: 8300000, guid: 97bdb2867be349f4eb67a1480d6116b2, type: 3}
   damage: 1.5
   muzzleVelocity: 1000
+  timeToWaitAfterShotToReload: 0.4
   fireModes: 00000000
   burstRounds: 0
   timeBtwBursts: 0
-  fireRate: 2
-  aimSpeed: 10
+  fireRate: 2.5
   bloom: 1
   numOfProjectiles: 1
   recoilX: -20
