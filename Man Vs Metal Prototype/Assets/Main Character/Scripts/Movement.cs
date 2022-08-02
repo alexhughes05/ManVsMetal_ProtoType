@@ -18,6 +18,7 @@ public class Movement : MonoBehaviour
     private Rigidbody _rb;
     private GroundChecker _groundChecker;
     private PlayerInputReader _playerInputReader;
+    private WeaponController _weaponController;
 
     public float CurrentSpeed { get { return _speed; } set { _speed = value; } }
 

@@ -25,6 +25,9 @@ public class PlayerAim : MonoBehaviour
     private Rigidbody _rb;
     private PlayerInputReader _playerInputReader;
 
+    //Properties
+    public float HorizontalSensitivity { get { return _horizontalSensitivity; } set { _horizontalSensitivity = value; } }
+    public float VerticalSensitivity { get { return _verticalSensitivity; } set { _verticalSensitivity = value; } }
     public Quaternion RecoilRotation { get; set; }
 
     private void Awake()
@@ -36,6 +39,9 @@ public class PlayerAim : MonoBehaviour
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        HorizontalSensitivity = _horizontalSensitivity;
+        VerticalSensitivity = _verticalSensitivity;
 
         _aimRef = _playerInputReader.PlayerInputActions.Player.Aim;
     }
@@ -66,9 +72,9 @@ public class PlayerAim : MonoBehaviour
 
     private void Rotate()
     {
-        _cameraPitch -= _inputVector.y * _verticalSensitivity * Time.deltaTime;
+        _cameraPitch -= _inputVector.y * VerticalSensitivity * Time.deltaTime;
         _cameraPitch = Mathf.Clamp(_cameraPitch, -90, 90);
-        _cameraYaw += _inputVector.x * _horizontalSensitivity * Time.deltaTime;
+        _cameraYaw += _inputVector.x * HorizontalSensitivity * Time.deltaTime;
         var qRot = Quaternion.Euler(_cameraPitch, _cameraYaw, 0f);
         if (RecoilRotation.eulerAngles != Vector3.zero)
             qRot *= RecoilRotation;

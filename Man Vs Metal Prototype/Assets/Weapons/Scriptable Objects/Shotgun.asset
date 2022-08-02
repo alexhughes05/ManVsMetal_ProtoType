@@ -20,6 +20,8 @@ MonoBehaviour:
   scopeSpeed: 10
   scopeOverlay: {fileID: 0}
   scopedFov: 0
+  scopedRecoilReductionFactor: 2.5
+  scopedAimSensitivityReductionFactor: 2
   gunFireSfx: {fileID: 8300000, guid: b8fb3b0e09c23834da2798615a3e8cc0, type: 3}
   pitchRandomization: 0.1
   reloadSfx: {fileID: 8300000, guid: 690fac1847271994db1c60059ce35864, type: 3}

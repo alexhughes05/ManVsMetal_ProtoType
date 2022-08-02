@@ -15,6 +15,8 @@ public class Shooter : ScriptableObject
     public float scopeSpeed;
     public GameObject scopeOverlay;
     public float scopedFov;
+    public float scopedRecoilReductionFactor;
+    public float scopedAimSensitivityReductionFactor;
     [Header("Sound Effects")]
     public AudioClip gunFireSfx;
     [Range(0, 1)]

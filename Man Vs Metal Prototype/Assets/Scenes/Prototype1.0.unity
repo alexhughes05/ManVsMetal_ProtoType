@@ -3008,8 +3008,8 @@ MonoBehaviour:
   cameraSmoothSpeed: 0.03
   enableLerpedRotation: 0
   rotationDampening: 15
-  _horizontalSensitivity: 60
-  _verticalSensitivity: 60
+  _horizontalSensitivity: 30
+  _verticalSensitivity: 30
 --- !u!114 &1258401121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3023,7 +3023,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _loadout:
-  - {fileID: 11400000, guid: 998b375f451a93c40b5fb562a8a3c3c7, type: 2}
+  - {fileID: 11400000, guid: 9816775a38c866d45916f7020c226c1d, type: 2}
   _weaponParent: {fileID: 780297248}
   _weaponCamera: {fileID: 1573547752}
   _shotAudioSource: {fileID: 1828579300}

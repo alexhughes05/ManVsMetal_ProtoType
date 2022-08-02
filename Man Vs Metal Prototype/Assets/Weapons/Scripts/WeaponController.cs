@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -54,10 +55,17 @@ public class WeaponController : MonoBehaviour
 
     //Components/References
     private Recoil _recoil;
+    private Movement _movement;
+    private PlayerAim _playerAim;
+
+    //Properties
+    //public event Action ZoomedInScope;
 
     private void Awake()
     {
         _mainCam = Camera.main;
+        _movement = GetComponent<Movement>();
+        _playerAim = GetComponent<PlayerAim>();
     }
 
     private void Start()
@@ -73,11 +81,11 @@ public class WeaponController : MonoBehaviour
     }
     void Update()
     {
-        Debug.Log("Total ammo is: " + _totalProjectilesRemaining);
-        Debug.Log("Ammo left in clip: " + _projectilesLeftInClip);
+        //Debug.Log("Total ammo is: " + _totalProjectilesRemaining);
+        //Debug.Log("Ammo left in clip: " + _projectilesLeftInClip);
 
-        if (_currentWeapon)
-            Debug.Log("Current FireMode is: " + _currentShooterData.fireModes[_currentFireModeIndex]);
+        //if (_currentWeapon)
+        //Debug.Log("Current FireMode is: " + _currentShooterData.fireModes[_currentFireModeIndex]);
 
         //Always aim weapon holder towards the reticle on the screen (center of camera)
         _weaponParent.rotation = _mainCam.transform.rotation;
@@ -89,7 +97,6 @@ public class WeaponController : MonoBehaviour
 
         if (_computeRecoil)
             _computeRecoil = _recoil.CalculateRecoil(GetComponent<PlayerAim>());
-        //_computeRecoil = _recoil.CalculateRecoil(_currentWeapon.transform.GetChild(0));
     }
 
     private void UpdateHitmarkerOpaqueTime()
@@ -169,8 +176,8 @@ public class WeaponController : MonoBehaviour
                 projectile.Damage = _currentShooterData.damage;
 
                 //Calculate direction
-                var bloomX = Random.Range(-_currentShooterData.bloom, _currentShooterData.bloom);
-                var bloomY = Random.Range(-_currentShooterData.bloom, _currentShooterData.bloom);
+                var bloomX = UnityEngine.Random.Range(-_currentShooterData.bloom, _currentShooterData.bloom);
+                var bloomY = UnityEngine.Random.Range(-_currentShooterData.bloom, _currentShooterData.bloom);
                 var direction = projectile.CalculateProjectileDirection(_mainCam.transform.position, _mainCam, bloomX, bloomY);
 
                 projectile.ApplyForceOnProjectile(direction * _currentShooterData.muzzleVelocity, ForceMode.Impulse);
@@ -227,21 +234,58 @@ public class WeaponController : MonoBehaviour
     }
     public void Scope(bool isScoping)
     {
-        if (isScoping)
+        if (_currentShooterData != null)
         {
-            _crossHair.gameObject.SetActive(false);
+            if (isScoping)
+            {
+                _crossHair.gameObject.SetActive(false);
 
-            if (_scopeCoroutine != null)
-                StopCoroutine(_scopeCoroutine);
-            _scopeCoroutine = StartCoroutine(ExecuteScopeEffect(_aimState.localPosition, 1 / _currentShooterData.scopeSpeed));
-        }
-        else
-        {
-            if (_scopeCoroutine != null)
-                StopCoroutine(_scopeCoroutine);
-            _scopeCoroutine = StartCoroutine(ExecuteScopeEffect(_hipState.localPosition, 1 / _currentShooterData.scopeSpeed));
-            _crossHair.gameObject.SetActive(true);
-            OnUnscope();
+                if (_scopeCoroutine != null)
+                    StopCoroutine(_scopeCoroutine);
+                _scopeCoroutine = StartCoroutine(ExecuteScopeEffect(_aimState.localPosition, 1 / _currentShooterData.scopeSpeed));
+
+                if (_movement != null)
+                    _movement.CurrentSpeed /= 3;
+
+                if (_playerAim != null)
+                {
+                    _playerAim.VerticalSensitivity /= _currentShooterData.scopedAimSensitivityReductionFactor;
+                    _playerAim.HorizontalSensitivity /= _currentShooterData.scopedAimSensitivityReductionFactor;
+                }
+
+                if (_recoil != null)
+                {
+                    _recoil.RecoilX /= _currentShooterData.scopedRecoilReductionFactor;
+                    _recoil.RecoilY /= _currentShooterData.scopedRecoilReductionFactor;
+                    _recoil.RecoilZ /= _currentShooterData.scopedRecoilReductionFactor;
+                }
+            }
+            else
+            {
+                if (_scopeCoroutine != null)
+                    StopCoroutine(_scopeCoroutine);
+                _scopeCoroutine = StartCoroutine(ExecuteScopeEffect(_hipState.localPosition, 1 / _currentShooterData.scopeSpeed));
+                _crossHair.gameObject.SetActive(true);
+
+                if (_currentShooterData.scopeOverlay)
+                    OnUnscope();
+
+                if (_movement != null)
+                    _movement.CurrentSpeed *= 3;
+
+                if (_playerAim != null)
+                {
+                    _playerAim.VerticalSensitivity *= _currentShooterData.scopedAimSensitivityReductionFactor;
+                    _playerAim.HorizontalSensitivity *= _currentShooterData.scopedAimSensitivityReductionFactor;
+                }
+
+                if (_recoil != null)
+                {
+                    _recoil.RecoilX *= _currentShooterData.scopedRecoilReductionFactor;
+                    _recoil.RecoilY *= _currentShooterData.scopedRecoilReductionFactor;
+                    _recoil.RecoilZ *= _currentShooterData.scopedRecoilReductionFactor;
+                }
+            }
         }
     }
     private IEnumerator ExecuteScopeEffect(Vector3 endValue, float duration)
@@ -260,7 +304,10 @@ public class WeaponController : MonoBehaviour
 
         //If scoping in
         if (endValue == _aimState.localPosition)
-            OnScopeIn();
+        {
+            if (_currentShooterData != null && _currentShooterData.scopeOverlay)
+                OnScopeIn();
+        }
     }
     private void OnScopeIn()
     {
@@ -322,7 +369,7 @@ public class WeaponController : MonoBehaviour
         if (_shotAudioSource != null)
         {
             if (randomizePitch)
-                audioSource.pitch = 1 - _currentShooterData.pitchRandomization + Random.Range(-_currentShooterData.pitchRandomization, _currentShooterData.pitchRandomization);
+                audioSource.pitch = 1 - _currentShooterData.pitchRandomization + UnityEngine.Random.Range(-_currentShooterData.pitchRandomization, _currentShooterData.pitchRandomization);
             else
                 audioSource.pitch = 1;
 
@@ -405,27 +452,28 @@ public class WeaponController : MonoBehaviour
 
 public class Recoil
 {
-    private readonly float _recoilX;
-    private readonly float _recoilY;
-    private readonly float _recoilZ;
-    private readonly float _snappiness;
-    private readonly float _returnSpeed;
     private Vector3 _currentRotation;
     private Vector3 _targetRotation;
 
+    public float RecoilX { get; set; }
+    public float RecoilY { get; set; }
+    public float RecoilZ { get; set; }
+    public float Snappiness { get; set; }
+    public float ReturnSpeed { get; set; }
+
     public Recoil(float recoilX, float recoilY, float recoilZ, float snappiness, float returnSpeed)
     {
-        _recoilX = recoilX;
-        _recoilY = recoilY;
-        _recoilZ = recoilZ;
-        _snappiness = snappiness;
-        _returnSpeed = returnSpeed;
+        RecoilX = recoilX;
+        RecoilY = recoilY;
+        RecoilZ = recoilZ;
+        Snappiness = snappiness;
+        ReturnSpeed = returnSpeed;
     }
 
     public bool CalculateRecoil(PlayerAim _playerAimScript)
     {
-        _targetRotation = Vector3.Lerp(_targetRotation, Vector3.zero, _returnSpeed / 25f);
-        _currentRotation = Vector3.Slerp(_currentRotation, _targetRotation, _snappiness * Time.deltaTime);
+        _targetRotation = Vector3.Lerp(_targetRotation, Vector3.zero, ReturnSpeed / 25f);
+        _currentRotation = Vector3.Slerp(_currentRotation, _targetRotation, Snappiness * Time.deltaTime);
         _playerAimScript.RecoilRotation = Quaternion.Euler(_currentRotation);
         //gameObjectTransform.localRotation = Quaternion.Euler(_currentRotation);
 
@@ -434,5 +482,10 @@ public class Recoil
         else
             return false;
     }
-    public void InitiateRecoil() => _targetRotation += new Vector3(_recoilX, Random.Range(-_recoilY, _recoilY), Random.Range(-_recoilZ, _recoilZ));
+    public void InitiateRecoil()
+    {
+        _targetRotation += new Vector3(RecoilX, UnityEngine.Random.Range(-RecoilY, RecoilY), UnityEngine.Random.Range(-RecoilZ, RecoilZ));
+
+        Debug.Log("When scoping, Recoil x is " + RecoilX);
+    }
 }
