@@ -116,6 +116,15 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CycleWeapon"",
+                    ""type"": ""Value"",
+                    ""id"": ""a9ad096c-1758-4f70-a26c-d25c25488cf2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -404,6 +413,28 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""action"": ""FireModeToggle"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f8591f9b-2b8b-495a-8f84-0ef667b01553"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""CycleWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""93eea67c-d365-4bca-9837-4d5f4cd719e2"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CycleWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -439,6 +470,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_FireModeToggle = m_Player.FindAction("FireModeToggle", throwIfNotFound: true);
+        m_Player_CycleWeapon = m_Player.FindAction("CycleWeapon", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -508,6 +540,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Crouch;
     private readonly InputAction m_Player_Sprint;
     private readonly InputAction m_Player_FireModeToggle;
+    private readonly InputAction m_Player_CycleWeapon;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -522,6 +555,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         public InputAction @Crouch => m_Wrapper.m_Player_Crouch;
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
         public InputAction @FireModeToggle => m_Wrapper.m_Player_FireModeToggle;
+        public InputAction @CycleWeapon => m_Wrapper.m_Player_CycleWeapon;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -561,6 +595,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 @FireModeToggle.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFireModeToggle;
                 @FireModeToggle.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFireModeToggle;
                 @FireModeToggle.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFireModeToggle;
+                @CycleWeapon.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCycleWeapon;
+                @CycleWeapon.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCycleWeapon;
+                @CycleWeapon.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCycleWeapon;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -595,6 +632,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 @FireModeToggle.started += instance.OnFireModeToggle;
                 @FireModeToggle.performed += instance.OnFireModeToggle;
                 @FireModeToggle.canceled += instance.OnFireModeToggle;
+                @CycleWeapon.started += instance.OnCycleWeapon;
+                @CycleWeapon.performed += instance.OnCycleWeapon;
+                @CycleWeapon.canceled += instance.OnCycleWeapon;
             }
         }
     }
@@ -629,5 +669,6 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         void OnCrouch(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnFireModeToggle(InputAction.CallbackContext context);
+        void OnCycleWeapon(InputAction.CallbackContext context);
     }
 }

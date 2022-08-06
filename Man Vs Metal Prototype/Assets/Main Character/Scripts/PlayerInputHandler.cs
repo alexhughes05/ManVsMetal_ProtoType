@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerInputReader))]
@@ -37,8 +38,9 @@ public class PlayerInputHandler : MonoBehaviour
         _playerInputReader.JumpInput += JumpInputHandler;
         _playerInputReader.ShootInput += _weaponController.ShootingHandler;
         _playerInputReader.Scope += _weaponController.Scope;
-        _playerInputReader.Reload += _weaponController.Reload;
+        _playerInputReader.Reload += _weaponController.ReloadHandler;
         _playerInputReader.FireModeToggle += _weaponController.ChangeFireMode;
+        _playerInputReader.CycleWeapon += _weaponController.CycleWeapon;
         _playerInputReader.Crouch += CrouchHandler;
         _playerInputReader.Sprint += SprintHandler;
     }
