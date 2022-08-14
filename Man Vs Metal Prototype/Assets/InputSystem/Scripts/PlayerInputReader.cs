@@ -12,10 +12,11 @@ public class PlayerInputReader : MonoBehaviour
     public event Action Crouch;
     public event Action FireModeToggle;
     public event Action CycleWeapon;
-    public event Action Reload;
-    public event Action<bool> ShootInput;
-    public event Action<bool> Scope;
     public event Action<bool> Sprint;
+    public event Action<bool> AttackInput;
+    public event Func<bool> Reload;
+    public event Func<bool> ScopeIn;
+    public event Func<bool> ScopeOut;
 
     private void Awake()
     {
@@ -32,16 +33,16 @@ public class PlayerInputReader : MonoBehaviour
         PlayerInputActions.Player.FireModeToggle.performed += _ => FireModeToggle?.Invoke();
         //Swap Weapon
         PlayerInputActions.Player.CycleWeapon.performed += _ => CycleWeapon?.Invoke();
-        //Reload
-        PlayerInputActions.Player.Reload.performed += _ => Reload?.Invoke();
         //Shooting
-        PlayerInputActions.Player.Shoot.performed += _ => ShootInput?.Invoke(true);
-        PlayerInputActions.Player.Shoot.canceled += _ => ShootInput?.Invoke(false);
+        PlayerInputActions.Player.Attack.performed += _ => AttackInput?.Invoke(true);
+        PlayerInputActions.Player.Attack.canceled += _ => AttackInput?.Invoke(false);
         //Scope
-        PlayerInputActions.Player.Scope.performed += _ => Scope?.Invoke(true);
-        PlayerInputActions.Player.Scope.canceled += _ => Scope?.Invoke(false);
+        PlayerInputActions.Player.Scope.performed += _ => ScopeIn?.Invoke();
+        PlayerInputActions.Player.Scope.canceled += _ => ScopeOut?.Invoke();
         //Sprint
         PlayerInputActions.Player.Sprint.performed += _ => Sprint?.Invoke(true);
         PlayerInputActions.Player.Sprint.canceled += _ => Sprint?.Invoke(false);
+        //Reload
+        PlayerInputActions.Player.Reload.performed += _ => Reload?.Invoke();
     }
 }

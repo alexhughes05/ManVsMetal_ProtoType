@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 476ce531a13c3be4cbc433515ee9c3cf, type: 3}
   m_Name: M203
   m_EditorClassIdentifier: 
-  _prefab: {fileID: 932278657325257722, guid: 02a309b880cbc4448b713beac6d0c4f2, type: 3}
+  prefab: {fileID: 932278657325257722, guid: 02a309b880cbc4448b713beac6d0c4f2, type: 3}
+  damage: 0.5
   crossHair: {fileID: 2942063912305341180, guid: ef3f2db7e5d93d248a9e454c78c13b30, type: 3}
   projectile: {fileID: 4615358345657303796, guid: 24ea94d27b18b0547bb31f85d29d1de8, type: 3}
   unlimitedAmmo: 0
@@ -24,11 +25,10 @@ MonoBehaviour:
   gunFireSfx: {fileID: 8300000, guid: 72ecebed4922566459403ae37b9ead18, type: 3}
   pitchRandomization: 0.1
   timeToWaitAfterShotToReload: 0.5
-  timeToWaitAfterAmmoRefillToCock: 0.5
+  timeDelayBeforeCocking: 0.5
   refillAmmoSfx: {fileID: 8300000, guid: 27760f0fd83c19c4894ca88fc3487ba4, type: 3}
   cockSfx: {fileID: 8300000, guid: 9e65836040760d74889e7ebeca59c7a8, type: 3}
   dryTrigger: {fileID: 8300000, guid: 97bdb2867be349f4eb67a1480d6116b2, type: 3}
-  damage: 0.5
   muzzleVelocity: 40
   fireModes: 01000000
   burstRounds: 0

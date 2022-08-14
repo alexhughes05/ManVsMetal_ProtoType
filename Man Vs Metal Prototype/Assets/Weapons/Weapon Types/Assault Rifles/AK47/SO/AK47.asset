@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bab7f3bc2e83f444950f831c4d7e53a, type: 3}
   m_Name: AK47
   m_EditorClassIdentifier: 
-  _prefab: {fileID: 7488293552629168366, guid: 3bc9a22fb244a584d850a3d137f770e8, type: 3}
+  prefab: {fileID: 7488293552629168366, guid: 3bc9a22fb244a584d850a3d137f770e8, type: 3}
+  damage: 1
   crossHair: {fileID: 7691306924125940419, guid: b6d5a9bb7c9b9b84eb2e0002403af624, type: 3}
   projectile: {fileID: 4756692322364726346, guid: bee920cc3b5552a4cbb0afe211a0e77b, type: 3}
   unlimitedAmmo: 0
@@ -24,11 +25,10 @@ MonoBehaviour:
   gunFireSfx: {fileID: 8300000, guid: 7197d3938b44f3943864dfdd01799b1b, type: 3}
   pitchRandomization: 0.07
   timeToWaitAfterShotToReload: 0.5
-  timeToWaitAfterAmmoRefillToCock: 0.2
+  timeDelayBeforeCocking: 0.2
   refillAmmoSfx: {fileID: 8300000, guid: 6dd9ec6340e16e64195bb3e36257f645, type: 3}
   cockSfx: {fileID: 8300000, guid: 27f75e20911ddde41ae441f340c76f24, type: 3}
   dryTrigger: {fileID: 8300000, guid: 97bdb2867be349f4eb67a1480d6116b2, type: 3}
-  damage: 1
   muzzleVelocity: 1000
   fireModes: 0300000002000000
   burstRounds: 3

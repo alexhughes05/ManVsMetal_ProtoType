@@ -1,11 +1,11 @@
 using System.Collections;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Shooter", menuName = "Shooter")]
-public abstract class ShooterSO : ScriptableObject
+[CreateAssetMenu(fileName = "New Gun", menuName = "Weapon/Gun")]
+public abstract class GunSO : WeaponSO
 {
     #region Inspector
-    public GameObject _prefab;
+    [Header("Crosshair")]
     public GameObject crossHair;
     [Header("Projectile")]
     public GameObject projectile;
@@ -22,12 +22,11 @@ public abstract class ShooterSO : ScriptableObject
     [Range(0, 1)]
     public float pitchRandomization;
     public float timeToWaitAfterShotToReload;
-    public float timeToWaitAfterAmmoRefillToCock; //timeBufferBeforeCocking
+    public float timeDelayBeforeCocking;
     public AudioClip refillAmmoSfx;
     public AudioClip cockSfx;
     public AudioClip dryTrigger;
-    [Header("Settings")]
-    public float damage;
+    [Header("Gun Settings")]
     public float muzzleVelocity;
     public FireModes[] fireModes;
     public int burstRounds;
@@ -47,6 +46,7 @@ public abstract class ShooterSO : ScriptableObject
         RemainingAmmoInClip = -1;
         RemainingBurstRounds = -1;
         TotalAmmoRemaining = -1;
+        CurrentFireModeIndex = 0;
         IsRefillingAmmo = false;
         IsCocking = false;
     }
@@ -62,4 +62,11 @@ public abstract class ShooterSO : ScriptableObject
     public int RemainingBurstRounds { get; set; }
     public int TotalAmmoRemaining { get; set; }
     #endregion
+
+    public override void ResetData()
+    {
+        RemainingAmmoInClip = clipSize;
+        RemainingBurstRounds = burstRounds;
+        TotalAmmoRemaining = maxAmmo;
+    }
 }

@@ -12,28 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da3e418ca2c974048b8b7214b5f0adaa, type: 3}
   m_Name: L96
   m_EditorClassIdentifier: 
-  _prefab: {fileID: 3254493253534762904, guid: 4bbce759057af3a49a877fafcb9ffbe1, type: 3}
+  prefab: {fileID: 3254493253534762904, guid: 4bbce759057af3a49a877fafcb9ffbe1, type: 3}
+  damage: 4
   crossHair: {fileID: 7691306924125940419, guid: b6d5a9bb7c9b9b84eb2e0002403af624, type: 3}
   projectile: {fileID: 4756692322364726346, guid: bee920cc3b5552a4cbb0afe211a0e77b, type: 3}
   unlimitedAmmo: 0
-  maxAmmo: 36
-  clipSize: 6
+  maxAmmo: 30
+  clipSize: 10
   scopeSpeed: 10
   scopedRecoilReductionFactor: 10
   scopedAimSensitivityReductionFactor: 4
   gunFireSfx: {fileID: 8300000, guid: 64f77b53ebe00324c8ba9f9fe1769962, type: 3}
   pitchRandomization: 0.1
   timeToWaitAfterShotToReload: 0.7
-  timeToWaitAfterAmmoRefillToCock: 0.2
+  timeDelayBeforeCocking: 0.2
   refillAmmoSfx: {fileID: 8300000, guid: 7b3b3249e2508434fa85ad4dfa073a54, type: 3}
   cockSfx: {fileID: 8300000, guid: 323d44dbbcbfe0e449d38f457ecf6869, type: 3}
   dryTrigger: {fileID: 8300000, guid: 97bdb2867be349f4eb67a1480d6116b2, type: 3}
-  damage: 4
   muzzleVelocity: 1000
   fireModes: 00000000
   burstRounds: 0
   timeBtwBursts: 0
-  fireRate: 3
+  fireRate: 1
   bloom: 1
   recoilX: -50
   recoilY: 5

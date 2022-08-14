@@ -96,15 +96,26 @@ public class Projectile : MonoBehaviour
     {
         _rb.AddForce(forceVector, forceMode);
     }
-    public Vector3 CalculateProjectileDirection(Vector3 initialPos, Camera cam, float bloomX, float bloomY)
+    public Vector3 CalculateProjectileDirection(Transform shotLocation, float bloomX, float bloomY)
     {
-        Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, Mathf.Infinity, _projectileLayerMask);
-        var hitDirection = (hit.point - initialPos).normalized;
+        Vector3 currentBloom = shotLocation.position + shotLocation.forward * 1000f;
+        currentBloom += bloomX * shotLocation.up;
+        currentBloom += bloomY * shotLocation.right;
+        var direction = currentBloom - shotLocation.position;
 
-        Vector3 currentBloom = initialPos + hitDirection * 1000f;
-        currentBloom += bloomX * cam.transform.up;
-        currentBloom += bloomY * cam.transform.right;
-        var direction = currentBloom - initialPos;
+        return direction.normalized;
+    }
+
+    //Vector3 fireLo
+    public Vector3 CalculateVisualProjectileDirection(Transform shotLocation, Transform visualShotLocation, float bloomX, float bloomY)
+    {
+        Physics.Raycast(shotLocation.position, shotLocation.forward, out RaycastHit hit, Mathf.Infinity, _projectileLayerMask);
+        var hitDirection = (hit.point - visualShotLocation.position).normalized;
+
+        Vector3 currentBloom = visualShotLocation.position + hitDirection * 1000f;
+        currentBloom += bloomX * shotLocation.up;
+        currentBloom += bloomY * shotLocation.right;
+        var direction = currentBloom - shotLocation.position;
         return direction.normalized;
     }
 

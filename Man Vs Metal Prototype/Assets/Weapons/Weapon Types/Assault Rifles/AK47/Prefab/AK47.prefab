@@ -9806,6 +9806,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7827278018602033748}
+  - component: {fileID: 6317029933890279939}
   m_Layer: 13
   m_Name: AK47
   m_TagString: Untagged
@@ -9830,6 +9831,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6317029933890279939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7488293552629168366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae2ed37fd37b34942b15ff603c334f10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _weaponData: {fileID: 11400000, guid: f4eaf64d427b61443876ef670f3c964c, type: 2}
+  _weaponCamera: {fileID: 0}
+  _weaponHolder: {fileID: 0}
+  isControlledByAI: 0
+  _hitMarkerSfx: {fileID: 8300000, guid: 2a8df022f34275743beaf6f1f060f0c8, type: 3}
+  _hitMarkerPrefab: {fileID: 3603084366390911509, guid: d97cfb5ac7b98cc48acb583deb20ee28, type: 3}
 --- !u!1 &8618164589870199923
 GameObject:
   m_ObjectHideFlags: 0

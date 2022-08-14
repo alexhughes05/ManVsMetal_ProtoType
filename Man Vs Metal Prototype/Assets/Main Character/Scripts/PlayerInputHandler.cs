@@ -24,6 +24,7 @@ public class PlayerInputHandler : MonoBehaviour
     private Movement _movement;
     private GroundChecker _groundChecker;
     private WeaponController _weaponController;
+    private Gun _gun;
 
     private void Awake()
     {
@@ -31,18 +32,24 @@ public class PlayerInputHandler : MonoBehaviour
         _movement = GetComponent<Movement>();
         _groundChecker = GetComponent<GroundChecker>();
         _weaponController = FindObjectOfType<WeaponController>();
+        _gun = FindObjectOfType<Gun>();
     }
     private void Start()
     {
         _jumpTimer = -1;
         _playerInputReader.JumpInput += JumpInputHandler;
-        _playerInputReader.ShootInput += _weaponController.ShootingHandler;
-        _playerInputReader.Scope += _weaponController.Scope;
-        _playerInputReader.Reload += _weaponController.ReloadHandler;
-        _playerInputReader.FireModeToggle += _weaponController.ChangeFireMode;
         _playerInputReader.CycleWeapon += _weaponController.CycleWeapon;
+        _playerInputReader.AttackInput += _weaponController.UseWeaponHandler;
         _playerInputReader.Crouch += CrouchHandler;
         _playerInputReader.Sprint += SprintHandler;
+    }
+    private void OnDestroy()
+    {
+        _playerInputReader.JumpInput -= JumpInputHandler;
+        _playerInputReader.CycleWeapon -= _weaponController.CycleWeapon;
+        _playerInputReader.AttackInput -= _weaponController.UseWeaponHandler;
+        _playerInputReader.Crouch -= CrouchHandler;
+        _playerInputReader.Sprint -= SprintHandler;
     }
 
     private void Update()

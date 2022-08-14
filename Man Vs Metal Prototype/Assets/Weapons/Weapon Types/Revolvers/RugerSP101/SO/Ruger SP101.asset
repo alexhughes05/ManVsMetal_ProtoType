@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 576ee7e8275f1274fa15bca56c8640fb, type: 3}
   m_Name: Ruger SP101
   m_EditorClassIdentifier: 
-  _prefab: {fileID: 4273500393004741040, guid: 181e18fec31179246a14003b7e832532, type: 3}
+  prefab: {fileID: 4273500393004741040, guid: 181e18fec31179246a14003b7e832532, type: 3}
+  damage: 1.5
   crossHair: {fileID: 7691306924125940419, guid: b6d5a9bb7c9b9b84eb2e0002403af624, type: 3}
   projectile: {fileID: 4756692322364726346, guid: bee920cc3b5552a4cbb0afe211a0e77b, type: 3}
   unlimitedAmmo: 0
@@ -24,11 +25,10 @@ MonoBehaviour:
   gunFireSfx: {fileID: 8300000, guid: 67022a5432c4bd2419f115fe613d8eb8, type: 3}
   pitchRandomization: 0.1
   timeToWaitAfterShotToReload: 0.4
-  timeToWaitAfterAmmoRefillToCock: 0.2
+  timeDelayBeforeCocking: 0.2
   refillAmmoSfx: {fileID: 8300000, guid: f48f6222080956648a2042bb6e98d2c9, type: 3}
   cockSfx: {fileID: 8300000, guid: cc01c0d9f927a21479e278c4cf2e01e1, type: 3}
   dryTrigger: {fileID: 8300000, guid: 97bdb2867be349f4eb67a1480d6116b2, type: 3}
-  damage: 1.5
   muzzleVelocity: 900
   fireModes: 01000000
   burstRounds: 0
